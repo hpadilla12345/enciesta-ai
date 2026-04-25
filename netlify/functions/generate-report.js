@@ -31,12 +31,14 @@ exports.handler = async (event) => {
     reportHtml = reportHtml.replace(/^```html?\s*/i, '').replace(/```\s*$/i, '').trim();
 
     const responseData = { respondent, answers, eventId, eventName, reportHtml, timestamp: new Date().toISOString() };
-    try { await gh.saveResponse(eventId, responseData); } catch (ghErr) { console.log('GitHub save failed:', ghErr.message); }
+    try { await gh.saveResponse(eventId, responseData); } catch (gh) { console.log('gh save failed:', gh.message); }
 
-    return { statusCode: 200, headers: { ...cors(), 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, reportHtml }) };
+    return { statusCode: 200, headers: { ...cors(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: true, reportHtml }) };
   } catch (err) {
     console.error('generate-report error:', err);
-    return { statusCode: 500, headers: { ...cors(), 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, error: err.message }) };
+    return { statusCode: 500, headers: { ...cors(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: false, error: err.message }) };
   }
 };
 function cors() { return { 'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Access-Control-Allow-Methods':'POST,OPTIONS' }; }
