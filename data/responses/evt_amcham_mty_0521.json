@@ -1,0 +1,27 @@
+[
+  {
+    "respondent": {
+      "name": "Hector Padilla",
+      "email": "hpadilla@tadah.com.mx",
+      "company": "Inmobiliaria Vermarketer SAS de CV",
+      "role": "sws",
+      "industry": "Manufactura / Industria"
+    },
+    "answers": {
+      "q1": "Manufactura discreta (autopartes, maquinaria, electrónica)",
+      "q1b": "100 – 500 empleados",
+      "q2": "Predictivo — machine learning activo, mantenimiento predictivo, alertas automáticas",
+      "q3": [
+        "Optimización de producción / scheduling"
+      ],
+      "q4": "Semi-automatizado — algunos sensores pero procesamiento manual",
+      "q5": "Presupuesto insuficiente",
+      "q6": 7,
+      "q7": "Menos de $50,000 USD"
+    },
+    "eventId": "evt_amcham_mty_0521",
+    "eventName": "AmCham Monterrey · Comité Manufactura · 21 Mayo 2026",
+    "reportHtml": "<div style=\"font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a1628;color:#f0f4f8;padding:32px;border-radius:12px;\">\n\n<!-- Score -->\n<div style=\"text-align:center;padding:32px 0;border-bottom:1px solid rgba(14,221,169,0.2);margin-bottom:32px;\">\n  <div style=\"font-size:11px;letter-spacing:0.15em;color:#7a8fa8;text-transform:uppercase;margin-bottom:12px;\">Score de Madurez IA</div>\n  <div style=\"font-size:72px;font-weight:800;color:#0edda9;line-height:1;\">58</div>\n  <div style=\"font-size:14px;color:#7a8fa8;margin-top:4px;\">de 100 puntos</div>\n  <div style=\"display:inline-block;background:rgba(14,221,169,0.1);border:1px solid rgba(14,221,169,0.3);border-radius:20px;padding:6px 20px;margin-top:16px;font-size:13px;color:#0edda9;font-weight:600;\">ADOPTADOR TEMPRANO</div>\n</div>\n\n<!-- Análisis -->\n<div style=\"margin-bottom:28px;\">\n  <div style=\"font-size:11px;letter-spacing:0.1em;color:#0edda9;text-transform:uppercase;margin-bottom:12px;font-weight:700;\">Análisis de tu posición</div>\n  <p style=\"color:#b0c4d8;font-size:14px;line-height:1.7;\">Hector, Inmobiliaria Vermarketer tiene una base sólida en madurez digital con ML activo y mantenimiento predictivo, lo que los posiciona mejor que el 65% de manufactureras en LATAM. Sin embargo, el presupuesto limitado (&lt;$50K USD) representa el principal obstáculo para escalar sus iniciativas de IA. Tu enfoque actual en optimización de producción es estratégico, pero la captura semi-automatizada de datos de piso limita el potencial de valor.</p>\n</div>\n\n<!-- Benchmark -->\n<div style=\"background:#0e203d;border:1px solid rgba(14,221,169,0.15);border-radius:8px;padding:20px;margin-bottom:28px;\">\n  <div style=\"font-size:11px;letter-spacing:0.1em;color:#5fa8ff;text-transform:uppercase;margin-bottom:12px;font-weight:700;\">Benchmark · Tu industria en LATAM</div>\n  <p style=\"color:#b0c4d8;font-size:14px;line-height:1.7;\">Solo el 23% de manufactureras discretas en LATAM han implementado ML predictivo (vs. tu etapa actual). El 78% reporta presupuesto como barrera #1. Tu presión competitiva (7/10) está por encima del promedio regional (5.2/10). Oportunidad: el ROI promedio en optimización de scheduling es 15-25% en el primer año para empresas de tu tamaño.</p>\n</div>\n\n<!-- Top 3 iniciativas -->\n<div style=\"margin-bottom:28px;\">\n  <div style=\"font-size:11px;letter-spacing:0.1em;color:#0edda9;text-transform:uppercase;margin-bottom:16px;font-weight:700;\">Tus 3 iniciativas prioritarias de IA</div>\n  <div style=\"background:#0e203d;border-left:3px solid #0edda9;padding:16px;margin-bottom:12px;\">\n    <div style=\"font-size:13px;font-weight:700;color:#0edda9;margin-bottom:6px;\">1. SCHEDULING INTELIGENTE CON ROI RÁPIDO</div>\n    <div style=\"font-size:12px;color:#b0c4d8;line-height:1.5;\">Optimización predictiva de scheduling aprovechando datos históricos existentes. Inversión: $25-35K, ROI esperado: 18-22% en 8 meses.</div>\n  </div>\n  <div style=\"background:#0e203d;border-left:3px solid #5fa8ff;padding:16px;margin-bottom:12px;\">\n    <div style=\"font-size:13px;font-weight:700;color:#5fa8ff;margin-bottom:6px;\">2. DIGITALIZACIÓN DE CAPTURA DE DATOS</div>\n    <div style=\"font-size:12px;color:#b0c4d8;line-height:1.5;\">Automatización completa de sensores IoT en piso. Base fundamental para escalar IA futuras. Inversión: $15-20K, habilita proyectos posteriores.</div>\n  </div>\n  <div style=\"background:#0e203d;border-left:3px solid #ff6b6b;padding:16px;\">\n    <div style=\"font-size:13px;font-weight:700;color:#ff6b6b;margin-bottom:6px;\">3. DETECCIÓN TEMPRANA DE ANOMALÍAS</div>\n    <div style=\"font-size:12px;color:#b0c4d8;line-height:1.5;\">Expansión del mantenimiento predictivo actual hacia detección de anomalías en tiempo real. Inversión: $10-15K adicionales.</div>\n  </div>\n</div>\n\n<!-- CTA -->\n<div style=\"background:linear-gradient(135deg,rgba(14,221,169,0.15),rgba(95,168,255,0.1));border:1px solid rgba(14,221,169,0.3);border-radius:8px;padding:24px;text-align:center;margin-top:32px;\">\n  <div style=\"font-size:16px;font-weight:700;color:#f0f4f8;margin-bottom:8px;\">¿Quieres convertir esto en un plan de acción real?</div>\n  <p style=\"font-size:13px;color:#7a8fa8;margin-bottom:20px;\">Agenda una sesión de AI Discovery gratuita de 60 minutos con nuestros consultores.</p>\n  <a href=\"https://grupoScanda.com/discovery\" style=\"display:inline-block;background:#0edda9;color:#050d1a;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.05em;\">AGENDAR MI SESIÓN →</a>\n</div>\n\n</div>",
+    "timestamp": "2026-04-25T03:00:37.453Z"
+  }
+]
