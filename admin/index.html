@@ -299,6 +299,18 @@
             </div>
           </div>
 
+          <!-- CTA del reporte -->
+          <div class="field-row">
+            <div class="field">
+              <label>Texto del botón CTA (en el reporte)</label>
+              <input type="text" id="ev-cta-text" placeholder="AGENDAR MI SESIÓN →">
+            </div>
+            <div class="field">
+              <label>URL del CTA (link de confirmación, Calendly, etc.)</label>
+              <input type="text" id="ev-cta-url" placeholder="https://calendly.com/...">
+            </div>
+          </div>
+
           <div class="field-row">
             <div class="field">
               <label>Estado</label>
@@ -712,6 +724,8 @@ function populateEditor(ev) {
   setLogoPreview(ev.clientLogo || '');
   document.getElementById('ev-org-name').value = ev.orgName || '';
   document.getElementById('ev-org-sub').value = ev.orgSub || '';
+  document.getElementById('ev-cta-text').value = ev.ctaText || '';
+  document.getElementById('ev-cta-url').value = ev.ctaUrl || '';
   questions = ev.questions || [];
   renderQuestionsList();
   if (ev.eventId) updateLinkSection(ev.eventId, ev.slug);
@@ -729,6 +743,8 @@ function clearEditor() {
   setLogoPreview('');
   document.getElementById('ev-org-name').value = '';
   document.getElementById('ev-org-sub').value = '';
+  document.getElementById('ev-cta-text').value = '';
+  document.getElementById('ev-cta-url').value = '';
   questions = [];
   renderQuestionsList();
   document.getElementById('linkSection').innerHTML = '<p style="color:var(--muted);font-size:13px">Guarda el evento primero para generar el link.</p>';
@@ -841,6 +857,8 @@ async function saveEvent() {
     clientLogo: document.getElementById('ev-logo').value || '',
     orgName: document.getElementById('ev-org-name').value || '',
     orgSub: document.getElementById('ev-org-sub').value || '',
+    ctaText: document.getElementById('ev-cta-text').value || '',
+    ctaUrl: document.getElementById('ev-cta-url').value || '',
     active: document.getElementById('ev-active').value === 'true',
     ccAdmin: document.getElementById('ev-cc').value === 'true',
     questions: questions.map((q, i) => ({ ...q, id: q.id || `q${i+1}` })),
