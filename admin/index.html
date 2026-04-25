@@ -1208,7 +1208,7 @@ function exportLeads() {
   // Recopilar todas las preguntas únicas
   const questionMap = {};
   allLeads.forEach(l => {
-    const qs = (currentEvent && currentEvent.questions) || [];
+    const ev = lsGetEvent(currentEventId); const qs = (ev && ev.questions) || [];
     qs.forEach(q => { if (q.id && q.label) questionMap[q.id] = q.label; });
     if (l.answers) Object.keys(l.answers).forEach(k => { if (!questionMap[k]) questionMap[k] = k; });
   });
@@ -1235,7 +1235,7 @@ function exportLeads() {
       wch: Math.min(60, Math.max(h.length, ...rows.slice(1).map(r => String(r[i]||'').length)))
     }));
     const wb = XLSX.utils.book_new();
-    const evName = (currentEvent && currentEvent.eventName || 'leads').slice(0,25).replace(/[^\w\s\-]/g,'');
+    const _ev = lsGetEvent(currentEventId); const evName = (_ev && _ev.eventName || 'leads').slice(0,25).replace(/[^a-zA-Z0-9_\-]/g,'');
     XLSX.utils.book_append_sheet(wb, ws, 'Leads');
     XLSX.writeFile(wb, `leads_${evName}_${new Date().toISOString().slice(0,10)}.xlsx`);
     showToast('✅ XLSX exportado con todas las respuestas');
