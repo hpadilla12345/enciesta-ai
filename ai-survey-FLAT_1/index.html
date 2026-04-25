@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=/admin/">
+<title>AI Survey · Grupo Scanda</title>
+</head>
+<body>
+<script>
+  // Route based on URL params
+  const p = new URLSearchParams(location.search);
+  if (p.get('evento')) {
+    location.href = '/survey/' + location.search;
+  } else {
+    location.href = '/admin/';
+  }
+</script>
+</body>
+</html>
