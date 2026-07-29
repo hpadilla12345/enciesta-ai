@@ -119,4 +119,44 @@ async function getFile(filePath) {
   return Buffer.from(d.content.replace(/\n/g,''), 'base64').toString('utf-8');
 }
 
-module.exports = { getEvents, saveEvent, deleteEvent, getResponses, saveResponse, deleteResponse, saveFile, getFile };
+// ── Cuestionarios libres (HTML personalizado) ──────────────────
+// Metadata en data/custom-forms.json · HTML en custom-forms/{slug}.html
+// Respuestas en data/custom-responses/{slug}.json
+
+async function getCustomForms() {
+  const { data } = await ghGet('data/custom-forms.json');
+  return data || [];
+}
+
+async function saveCustomForm(formData) {
+  const { data: forms, sha } = await ghGet('data/custom-forms.json');
+  const list = forms || [];
+  const idx = list.findIndex(f => f.formId === formData.formId);
+  if (idx >= 0) list[idx] = formData; else list.push(formData);
+  await ghPut('data/custom-forms.json', list, sha, `cuestionario: ${formData.formName}`);
+  return formData;
+}
+
+async function deleteCustomForm(formId) {
+  const { data: forms, sha } = await ghGet('data/custom-forms.json');
+  const list = (forms || []).filter(f => f.formId !== formId);
+  await ghPut('data/custom-forms.json', list, sha, `delete cuestionario: ${formId}`);
+}
+
+async function getCustomResponses(slug) {
+  const { data } = await ghGet(`data/custom-responses/${slug}.json`);
+  return data || [];
+}
+
+async function saveCustomResponse(slug, responseData) {
+  const { data: responses, sha } = await ghGet(`data/custom-responses/${slug}.json`);
+  const list = responses || [];
+  list.push(responseData);
+  await ghPut(`data/custom-responses/${slug}.json`, list, sha, `respuesta @ ${slug}`);
+  return responseData;
+}
+
+module.exports = {
+  getEvents, saveEvent, deleteEvent, getResponses, saveResponse, deleteResponse, saveFile, getFile,
+  getCustomForms, saveCustomForm, deleteCustomForm, getCustomResponses, saveCustomResponse
+};
