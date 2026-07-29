@@ -1,0 +1,61 @@
+[
+  {
+    "nombre": "HEctor",
+    "area": "Operaciones",
+    "puesto": "CEO",
+    "baseline": "Sí, tengo el número",
+    "baselineNum": "",
+    "fuentes": [
+      "Excel / macros locales",
+      "SAP",
+      "Power BI"
+    ],
+    "clusters": {
+      "planeacion": {
+        "prioridad": 4,
+        "dolor": 3,
+        "impacto": "",
+        "stoppers": "",
+        "skip": false
+      },
+      "rentabilidad": {
+        "prioridad": 4,
+        "dolor": 4,
+        "impacto": "",
+        "stoppers": "",
+        "skip": false
+      },
+      "inventario": {
+        "prioridad": null,
+        "dolor": null,
+        "impacto": "",
+        "stoppers": "",
+        "skip": true
+      },
+      "ejecucion": {
+        "prioridad": null,
+        "dolor": null,
+        "impacto": "",
+        "stoppers": "",
+        "skip": true
+      },
+      "externos": {
+        "prioridad": null,
+        "dolor": null,
+        "impacto": "",
+        "stoppers": "",
+        "skip": true
+      },
+      "gobierno": {
+        "prioridad": null,
+        "dolor": null,
+        "impacto": "",
+        "stoppers": "",
+        "skip": true
+      }
+    },
+    "casoAdicional": "",
+    "casoAdicionalPrioridad": null,
+    "ts": "2026-07-29T19:50:26.047Z"
+  }
+]
