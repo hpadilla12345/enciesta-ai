@@ -86,6 +86,11 @@
   .drop { border: 1.5px dashed var(--border); border-radius: 10px; padding: 22px; text-align: center; color: var(--muted); font-size: 13px; cursor: pointer; margin-bottom: 14px; }
   .drop:hover { border-color: var(--accent); color: var(--text); }
   .drop.loaded { border-color: var(--accent); color: var(--accent); }
+  .status-box { border-radius: 9px; padding: 12px 15px; font-size: 12.5px; margin-bottom: 14px; line-height: 1.55; }
+  .status-box.ok { background: rgba(14,221,169,.08); border: 1px solid rgba(14,221,169,.35); color: var(--accent); }
+  .status-box.warn { background: rgba(255,179,64,.08); border: 1px solid rgba(255,179,64,.35); color: var(--warn); }
+  .status-box.bad { background: rgba(255,90,110,.08); border: 1px solid rgba(255,90,110,.35); color: var(--danger); }
+  .status-box b { display: block; margin-bottom: 3px; }
   .link-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 13.5px; color: var(--accent); word-break: break-all; margin-bottom: 14px; }
 
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
@@ -220,6 +225,7 @@
         <div class="panel-label">HTML del cuestionario</div>
         <div class="drop" id="dropZone" onclick="document.getElementById('fileInput').click()">&#128196; Arrastra o haz clic para cargar un archivo .html</div>
         <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="loadHtmlFile(event)">
+        <div id="htmlStatus"></div>
         <div class="field"><label>O pega el c&oacute;digo directamente</label>
           <textarea id="fHtml" class="code" placeholder="&lt;!DOCTYPE html&gt;..."></textarea>
           <div class="hint-sm">Para que las respuestas se guarden, el HTML debe llamar a <span class="mono">/.netlify/functions/save-custom-response</span> con el mismo slug de arriba.</div>
@@ -407,6 +413,7 @@ function showEditor(form) {
   document.getElementById('fHtml').value = '';
   document.getElementById('dropZone').classList.remove('loaded');
   document.getElementById('dropZone').innerHTML = '\u{1F4C4} Arrastra o haz clic para cargar un archivo .html';
+  document.getElementById('htmlStatus').innerHTML = '';
   updateLinkBox(form && form.slug);
 }
 
@@ -418,19 +425,63 @@ function switchTab(tab) {
   document.querySelector('.tab-link').style.display = tab === 'link' ? 'block' : 'none';
 }
 
-function loadHtmlFile(evt) {
-  const file = evt.target.files[0];
+/* ===== VALIDACIÓN DEL CONTRATO DE PERSISTENCIA ===== */
+function inspectHtml(html) {
+  const m = html.match(/FORM_SLUG\s*=\s*['"]([^'"]*)['"]/);
+  return {
+    hasEndpoint: html.indexOf('save-custom-response') !== -1,
+    hasSlugVar: !!m,
+    formSlug: m ? m[1] : null
+  };
+}
+
+function updateHtmlStatus() {
+  const box = document.getElementById('htmlStatus');
+  const html = document.getElementById('fHtml').value;
+  if (!html.trim()) { box.innerHTML = ''; return; }
+
+  const info = inspectHtml(html);
+  const slug = document.getElementById('fSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+  if (!info.hasEndpoint) {
+    box.className = 'status-box bad';
+    box.innerHTML = '<b>\u274C Este HTML no guardar\u00e1 respuestas</b>No llama a <span class="mono">save-custom-response</span>. Se va a hospedar igual, pero las respuestas no llegar\u00e1n al admin. P\u00eddele a Claude que le agregue el contrato de persistencia.';
+    return;
+  }
+  if (!info.hasSlugVar) {
+    box.className = 'status-box warn';
+    box.innerHTML = '<b>\u26a0\ufe0f No encontr\u00e9 la constante FORM_SLUG</b>S\u00ed llama al endpoint, pero no puedo verificar con qu\u00e9 slug guarda. Revisa a mano que coincida con <span class="mono">' + (slug || '(sin slug)') + '</span>.';
+    return;
+  }
+  if (!slug) {
+    box.className = 'status-box warn';
+    box.innerHTML = '<b>\u26a0\ufe0f Falta el slug en la pesta\u00f1a INFO</b>El HTML guarda bajo <span class="mono">' + escapeHtml(info.formSlug) + '</span>. Escribe ese mismo slug en INFO, o al guardar lo ajusto por ti.';
+    return;
+  }
+  if (info.formSlug !== slug) {
+    box.className = 'status-box warn';
+    box.innerHTML = '<b>\u26a0\ufe0f Los slugs no coinciden</b>INFO dice <span class="mono">' + escapeHtml(slug) + '</span> pero el HTML guarda en <span class="mono">' + escapeHtml(info.formSlug) + '</span>.<br>Al guardar voy a reescribir el HTML para que use <span class="mono">' + escapeHtml(slug) + '</span>.';
+    return;
+  }
+  box.className = 'status-box ok';
+  box.innerHTML = '<b>\u2705 Todo correcto</b>El HTML guarda en <span class="mono">' + escapeHtml(info.formSlug) + '</span>, igual que el slug de INFO.';
+}
+
+function applyHtmlFile(file) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById('fHtml').value = e.target.result;
     const dz = document.getElementById('dropZone');
     dz.classList.add('loaded');
-    dz.innerHTML = '\u2705 ' + file.name + ' cargado (' + Math.round(file.size / 1024) + ' KB)';
-    showToast('\u2705 Archivo cargado \u2014 revisa y guarda');
+    dz.innerHTML = '\u2705 ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+    updateHtmlStatus();
+    showToast('\u2705 Archivo cargado \u2014 revisa el diagn\u00f3stico');
   };
   reader.readAsText(file);
 }
+
+function loadHtmlFile(evt) { applyHtmlFile(evt.target.files[0]); }
 
 /* ===== LOGO ===== */
 function handleLogoUpload(evt) {
@@ -481,12 +532,31 @@ async function saveForm() {
   if (btn.disabled) return;
   const formName = document.getElementById('fName').value.trim();
   const slug = document.getElementById('fSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
-  const html = document.getElementById('fHtml').value;
+  let html = document.getElementById('fHtml').value;
 
   if (!formName || !slug) { showToast('\u26a0\ufe0f Nombre y slug son obligatorios'); switchTab('info'); return; }
   const dup = allForms.filter(function(f){ return f.slug === slug && f.formId !== editingFormId; });
   if (dup.length) { showToast('\u26a0\ufe0f Ese slug ya est\u00e1 en uso por otro cuestionario'); switchTab('info'); return; }
   if (!editingFormId && !html.trim()) { showToast('\u26a0\ufe0f Falta el HTML del cuestionario'); switchTab('html'); return; }
+
+  // ── Validación del contrato de persistencia ──
+  let slugFixed = false;
+  if (html.trim()) {
+    const info = inspectHtml(html);
+    if (!info.hasEndpoint) {
+      if (!confirm('\u26a0\ufe0f Este HTML no llama a save-custom-response, as\u00ed que NO va a guardar respuestas en el admin.\n\n\u00bfSubirlo de todos modos?')) {
+        switchTab('html'); updateHtmlStatus(); return;
+      }
+    } else if (info.hasSlugVar && info.formSlug !== slug) {
+      html = html.replace(/(FORM_SLUG\s*=\s*['"])([^'"]*)(['"])/, '$1' + slug + '$3');
+      document.getElementById('fHtml').value = html;
+      slugFixed = true;
+    } else if (!info.hasSlugVar) {
+      if (!confirm('\u26a0\ufe0f No encontr\u00e9 la constante FORM_SLUG en el HTML, as\u00ed que no puedo verificar que guarde bajo "' + slug + '".\n\n\u00bfContinuar de todos modos?')) {
+        switchTab('html'); updateHtmlStatus(); return;
+      }
+    }
+  }
 
   const formData = {
     formId: editingFormId,
@@ -518,8 +588,11 @@ async function saveForm() {
     if (!res.ok) throw new Error(data.error || 'Error al guardar');
     editingFormId = data.formId;
     updateLinkBox(data.slug);
+    updateHtmlStatus();
     switchTab('link');
-    showToast('\u2705 Cuestionario guardado');
+    showToast(slugFixed
+      ? '\u2705 Guardado \u2014 ajust\u00e9 el FORM_SLUG a "' + slug + '"'
+      : '\u2705 Cuestionario guardado');
     await loadForms();
   } catch (err) {
     showToast('\u274C ' + err.message);
@@ -752,6 +825,13 @@ function escapeHtml(str) {
 /* ===== DRAG & DROP ===== */
 document.addEventListener('DOMContentLoaded', function() {
   bootstrapSession();
+
+  // Diagnóstico en vivo al cambiar slug o pegar HTML
+  const slugEl = document.getElementById('fSlug');
+  if (slugEl) slugEl.addEventListener('input', updateHtmlStatus);
+  const htmlEl = document.getElementById('fHtml');
+  if (htmlEl) { htmlEl.addEventListener('input', updateHtmlStatus); htmlEl.addEventListener('change', updateHtmlStatus); }
+
   const dz = document.getElementById('dropZone');
   if (dz) {
     ['dragenter','dragover'].forEach(function(ev){
@@ -760,18 +840,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ['dragleave','drop'].forEach(function(ev){
       dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.style.borderColor = ''; });
     });
-    dz.addEventListener('drop', function(e){
-      const file = e.dataTransfer.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev2){
-        document.getElementById('fHtml').value = ev2.target.result;
-        dz.classList.add('loaded');
-        dz.innerHTML = '\u2705 ' + file.name + ' cargado (' + Math.round(file.size / 1024) + ' KB)';
-        showToast('\u2705 Archivo cargado \u2014 revisa y guarda');
-      };
-      reader.readAsText(file);
-    });
+    dz.addEventListener('drop', function(e){ applyHtmlFile(e.dataTransfer.files[0]); });
   }
 });
 </script>
