@@ -131,8 +131,11 @@ async function getCustomForms() {
 async function saveCustomForm(formData) {
   const { data: forms, sha } = await ghGet('data/custom-forms.json');
   const list = forms || [];
-  const idx = list.findIndex(f => f.formId === formData.formId);
-  if (idx >= 0) list[idx] = formData; else list.push(formData);
+  // Dedupe por formId (edición normal) y por slug (protege contra doble-submit / carrera)
+  let idx = list.findIndex(f => f.formId === formData.formId);
+  if (idx < 0) idx = list.findIndex(f => f.slug === formData.slug);
+  if (idx >= 0) { formData.formId = list[idx].formId; list[idx] = formData; }
+  else list.push(formData);
   await ghPut('data/custom-forms.json', list, sha, `cuestionario: ${formData.formName}`);
   return formData;
 }
@@ -156,7 +159,12 @@ async function saveCustomResponse(slug, responseData) {
   return responseData;
 }
 
+async function clearCustomResponses(slug) {
+  const { sha } = await ghGet(`data/custom-responses/${slug}.json`);
+  await ghPut(`data/custom-responses/${slug}.json`, [], sha, `limpiar respuestas @ ${slug}`);
+}
+
 module.exports = {
   getEvents, saveEvent, deleteEvent, getResponses, saveResponse, deleteResponse, saveFile, getFile,
-  getCustomForms, saveCustomForm, deleteCustomForm, getCustomResponses, saveCustomResponse
+  getCustomForms, saveCustomForm, deleteCustomForm, getCustomResponses, saveCustomResponse, clearCustomResponses
 };
