@@ -224,9 +224,18 @@ Genera texto para estas 5 secciones separadas por ===:
       return `<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #f1f5f9"><div style="width:36px;height:36px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${icons[i]||'⚠️'}</div><div><div style="font-size:13px;font-weight:700;color:#0b1a30;margin-bottom:4px">${d.label} <span style="font-family:monospace;font-size:10px;padding:2px 7px;border-radius:4px;background:#fee2e2;color:#dc2626">${d.score}/${scaleMax}</span>${tagHtml}</div><div style="font-size:13px;color:#6b7280;line-height:1.6">${text.replace(d.label,'').replace(/^\s*[:\-]\s*/,'')}</div></div></div>`;
     }).join('');
 
-    // Industria IA (Track A / Track B)
-    const [trackAText, trackBText] = industriaText.split(/Track B/i);
-    const industria = `<div style="margin-bottom:16px"><div style="font-size:11px;font-family:monospace;font-weight:700;color:#0b1a30;background:#0b1a30;color:#a7f3d0;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px">Track A · IA Aumentada</div><p style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line">${(trackAText||industriaText).trim()}</p></div><div><div style="font-size:11px;font-family:monospace;font-weight:700;background:#4338ca;color:#e0e7ff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px">Track B · IA Nativa</div><p style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line">${(trackBText||'').trim()}</p></div>`;
+    // Bloque de contexto. Por defecto usa las dos pistas del modelo de IA;
+    // un evento puede definir sus propias etiquetas o pasar [] para texto plano
+    const TRACKS = (ev && Array.isArray(ev.trackLabels)) ? ev.trackLabels : ['Track A · IA Aumentada','Track B · IA Nativa'];
+    let industria;
+    if (TRACKS.length < 2) {
+      industria = `<p style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line">${industriaText.trim()}</p>`;
+    } else {
+      const sepRaw = TRACKS[1].split('·')[0].trim();
+      const sep = new RegExp(sepRaw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      const [trackAText, trackBText] = industriaText.split(sep);
+      industria = `<div style="margin-bottom:16px"><div style="font-size:11px;font-family:monospace;font-weight:700;background:#0b1a30;color:#a7f3d0;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px">${TRACKS[0]}</div><p style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line">${(trackAText||industriaText).trim()}</p></div><div><div style="font-size:11px;font-family:monospace;font-weight:700;background:#4338ca;color:#e0e7ff;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px">${TRACKS[1]}</div><p style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line">${(trackBText||'').trim()}</p></div>`;
+    }
 
     // Iniciativas
     const iniLines = iniciativasText.split(/\n(?=\d\.|\d\))/);
@@ -239,7 +248,9 @@ Genera texto para estas 5 secciones separadas por ===:
 
     // Ruta CoE steps based on level
     // Selecciona los pasos de ruta según el avg del respondente
-    const rutaBlock = ROUTE.find(r => avg <= r.maxAvg) || ROUTE[ROUTE.length - 1];
+    // Si una dimension critica esta vetada, la ruta arranca en el primer bloque
+    // aunque el promedio ponderado sea alto: no se recomienda escalar sin medicion
+    const rutaBlock = vetoed ? ROUTE[0] : (ROUTE.find(r => avg <= r.maxAvg) || ROUTE[ROUTE.length - 1]);
     const rutaSteps = rutaBlock.steps;
 
     const rutaHtml = rutaSteps.map((step, i) => `<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #e0e7ff"><div style="min-width:34px;height:34px;border-radius:50%;background:#3730a3;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">${i+1}</div><div><div style="font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.06em;color:#6366f1;margin-bottom:3px">${step[0]}</div><div style="font-size:13px;font-weight:700;color:#1e1b4b;margin-bottom:3px">${step[1]}</div><div style="font-size:12px;color:#4338ca;line-height:1.5">${step[2]}</div></div></div>`).join('');
