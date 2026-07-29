@@ -36,21 +36,12 @@ header p{font-size:13px;color:rgba(255,255,255,.72);margin-top:8px;max-width:780
 .sc button.on[data-v="2"]{background:#0d9488}
 .sc button.on[data-v="3"]{background:#1d4ed8}
 .side{position:sticky;top:18px}
-.score{background:#0b1a30;color:#fff;border-radius:12px;padding:22px;text-align:center;margin-bottom:14px}
-.score .n{font-size:50px;font-weight:900;line-height:1}
-.score .lv{font-size:14px;font-weight:700;color:#a7f3d0;margin-top:5px}
-.score .sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:5px}
 .prog{margin-top:14px;text-align:left}
 .prog .t{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;display:flex;justify-content:space-between}
 .prog .tr{background:rgba(255,255,255,.15);border-radius:99px;height:5px;overflow:hidden}
 .prog .fl{height:100%;background:#a7f3d0;border-radius:99px;transition:width .25s}
-.veto{background:#7f1d1d;color:#fecaca;font-size:11px;padding:8px 11px;border-radius:7px;margin-top:13px;text-align:left;line-height:1.5}
-.bars{padding:16px 18px}
 .bar{margin-bottom:11px}
-.bar .t{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px;gap:8px}
 .bar .t span:last-child{font-family:ui-monospace,monospace;font-weight:700;white-space:nowrap}
-.bar .tr{background:#e2e8f0;border-radius:99px;height:6px;overflow:hidden}
-.bar .fl{height:100%;border-radius:99px;transition:width .25s}
 .lines{padding:6px 22px 18px}
 .ln{display:grid;grid-template-columns:1fr 92px 1fr 34px;gap:9px;padding:9px 0;border-bottom:1px solid #f1f5f9;align-items:center}
 @media(max-width:640px){.ln{grid-template-columns:1fr}}
@@ -83,11 +74,22 @@ select{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #c
 .al:last-child{border-bottom:none}
 .al input{margin-top:3px;width:16px;height:16px;accent-color:#0d9488;cursor:pointer;flex:0 0 16px}
 .al label{cursor:pointer;color:#475569}
-.verdict{padding:18px 22px;font-size:13.5px;line-height:1.7;color:#334155}
-.verdict h3{font-size:13px;font-weight:800;color:#0b1a30;margin:14px 0 5px}
-.verdict h3:first-child{margin-top:0}
-.pill{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#eef2ff;color:#3730a3;margin-left:6px}
 .empty{color:#94a3b8;font-size:13px;padding:12px 0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:6px 0 4px}
+.fields label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:#475569}
+.fields label b{color:#dc2626;font-weight:700}
+.fields input{font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:7px;color:#1e293b;font-weight:400}
+.fields input:focus{outline:none;border-color:#0d9488}
+.send{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:14px}
+.prog2{margin-bottom:14px}
+.prog2 .t{font-size:11px;color:#64748b;margin-bottom:5px;display:flex;justify-content:space-between;font-family:ui-monospace,monospace}
+.prog2 .tr{background:#e2e8f0;border-radius:99px;height:6px;overflow:hidden}
+.prog2 .fl{height:100%;background:#0d9488;border-radius:99px;transition:width .25s}
+.send .st{font-size:12.5px;color:#64748b;line-height:1.55;margin-bottom:12px}
+.send button{width:100%;font-family:inherit;font-size:14px;font-weight:700;padding:12px;border-radius:8px;border:none;background:#0d9488;color:#fff;cursor:pointer}
+.send button:disabled{background:#cbd5e1;cursor:not-allowed}
+.send .ok{background:#f0fdf9;border:1px solid #a7f3d0;color:#0f766e;font-size:13px;padding:12px 14px;border-radius:8px;line-height:1.55}
+.send .er{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:13px;padding:12px 14px;border-radius:8px;line-height:1.55}
 @media print{
  body{background:#fff}.side{position:static}.layout{grid-template-columns:1fr}
  .sc button:not(.on){display:none}.sc button.on{flex:0 0 44px}
@@ -108,11 +110,16 @@ select{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #c
 <div>
 
 <div class="card">
-  <h2>Datos generales</h2>
+  <h2>Datos de quien responde<span class="w">requeridos</span></h2>
   <div class="lines">
-    <div class="ln" style="grid-template-columns:1fr 1fr;border:none">
-      <input id="meta-emp" placeholder="Empresa">
-      <input id="meta-fec" placeholder="Fecha y quién responde">
+    <div class="intro">El reporte de resultados se envía por correo al terminar. Los campos marcados con asterisco son necesarios para poder generarlo.</div>
+    <div class="fields">
+      <label>Empresa <b>*</b><input id="f-company" placeholder="Razón social o nombre comercial" oninput="chk()"></label>
+      <label>Nombre <b>*</b><input id="f-name" placeholder="Nombre y apellido" oninput="chk()"></label>
+      <label>Cargo<input id="f-role" placeholder="Ej. Director de Marketing" oninput="chk()"></label>
+      <label>Correo <b>*</b><input id="f-email" type="email" placeholder="nombre@empresa.com" oninput="chk()"></label>
+      <label>Fecha<input id="f-date" type="date" oninput="chk()"></label>
+      <label>Sector<input id="f-industry" placeholder="Ej. Tecnología, Manufactura" oninput="chk()"></label>
     </div>
   </div>
 </div>
@@ -157,27 +164,21 @@ select{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #c
   </div>
 </div>
 
-<div class="card">
-  <h2>Lectura del resultado</h2>
-  <div class="verdict" id="verdict"></div>
-</div>
+
 
 </div>
 
 <div class="side">
-  <div class="score">
-    <div style="font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#a7f3d0">Score global</div>
-    <div class="n" id="s-num">—</div>
-    <div class="lv" id="s-lv">Sin datos</div>
-    <div class="sub" id="s-sub">Promedio ponderado —</div>
-    <div class="prog"><div class="t"><span>Avance</span><span id="p-txt">0 de 0</span></div>
+  <div class="send">
+    <div style="font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#0d9488;margin-bottom:10px">Avance</div>
+    <div class="prog2"><div class="t"><span id="p-txt">0 de 0</span><span id="p-pct">0%</span></div>
       <div class="tr"><div class="fl" id="p-fl" style="width:0%"></div></div></div>
-    <div class="veto" id="s-veto" style="display:none"></div>
+    <div class="st" id="send-st">Complete empresa, nombre y correo para poder enviar.</div>
+    <button id="send-btn" disabled onclick="enviar()">Enviar respuestas</button>
   </div>
-  <div class="card"><div class="bars" id="s-bars"></div></div>
   <div class="tools">
-    <button class="btn g" onclick="exportar()">Descargar respuestas</button>
-    <button class="btn g" onclick="document.getElementById('imp').click()">Cargar archivo</button>
+    <button class="btn g" onclick="exportar()">Guardar copia</button>
+    <button class="btn g" onclick="document.getElementById('imp').click()">Cargar copia</button>
     <button class="btn g" onclick="window.print()">Imprimir</button>
   </div>
   <input type="file" id="imp" accept=".json" style="display:none" onchange="importar(event)">
@@ -186,9 +187,9 @@ select{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #c
 
 <script>
 var DIMS = [
- {id:'mA1',label:'Oferta y product-market fit',w:20,src:'lineas',
+ {id:'a1',label:'Oferta y product-market fit',w:20,src:'lineas',
   desc:'Esta dimensión se calcula con las respuestas del Paso 3, sobre las líneas de negocio evaluadas. No se responde aquí.'},
- {id:'mA2',label:'Datos y atribución',w:20,veto:true,items:[
+ {id:'a2',label:'Datos y atribución',w:20,veto:true,items:[
   'Conocemos el número absoluto de leads del último año y podemos recuperar la fuente',
   'Ese número se desglosa por canal: orgánico, pauta, social, email, referido',
   'Existe una convención de UTMs documentada y se aplica de forma consistente',
@@ -198,14 +199,14 @@ var DIMS = [
   'Conocemos el costo por lead calificado, desglosado por canal',
   'La analítica web y la consola de búsqueda tienen conversiones configuradas y alguien las revisa',
   'Existe un modelo de atribución definido y explícito']},
- {id:'mA3',label:'KPIs y medición',w:15,items:[
+ {id:'a3',label:'KPIs y medición',w:15,items:[
   'Nuestros indicadores principales son de demanda y negocio, no de alcance o seguidores',
   'Cada indicador tiene meta numérica y línea base de dónde parte',
   'Hay una cadencia fija de revisión, con fecha en el calendario',
   'La revisión incluye a ventas y a dirección, no solo a marketing',
   'Existe un tablero único al que todos miran, en vez de reportes paralelos',
   'Podemos citar una decisión concreta que se tomó a partir de un indicador']},
- {id:'mA4',label:'Canales digitales',w:15,items:[
+ {id:'a4',label:'Canales digitales',w:15,items:[
   'Pauta de búsqueda: cuenta activa, estructura por oferta, negativas, costo por lead conocido',
   'SEO: contenido con intención de búsqueda, posiciones conocidas, técnico atendido',
   'Visibilidad en motores de IA: sabemos si la marca aparece en respuestas generativas de nuestra categoría',
@@ -215,14 +216,14 @@ var DIMS = [
   'ABM: existe lista de cuentas nombradas trabajada por marketing y ventas en conjunto',
   'Email y nutrición: hay secuencias para el lead que aún no está listo, con base propia y consentimiento',
   'Eventos con captura digital: el lead del evento entra al sistema con su origen trazado']},
- {id:'mA5',label:'Objetivos',w:10,items:[
+ {id:'a5',label:'Objetivos',w:10,items:[
   'Existen objetivos de marketing escritos y aprobados para el período en curso',
   'Cada objetivo tiene línea base además de meta',
   'Están expresados como resultado de negocio, no como actividad',
   'Existe meta explícita de contribución de marketing al pipeline',
   'Si hay objetivos de marca, podemos citar una decisión tomada con esa métrica',
   'Hay responsable designado por objetivo y cadencia formal de revisión']},
- {id:'mA6',label:'Activos digitales',w:8,items:[
+ {id:'a6',label:'Activos digitales',w:8,items:[
   'El sitio opera como activo de conversión, no como folleto institucional',
   'Podemos publicar páginas de aterrizaje sin depender de un tercero, en días',
   'El desempeño técnico es adecuado en velocidad, móvil e indexación',
@@ -230,14 +231,14 @@ var DIMS = [
   'Las herramientas contratadas se usan realmente, no solo se pagan',
   'Los píxeles de conversión están instalados y disparando correctamente',
   'Hay gobierno de contenido definido si existen varios sitios o idiomas']},
- {id:'mA7',label:'Procesos y gobierno',w:7,items:[
+ {id:'a7',label:'Procesos y gobierno',w:7,items:[
   'Existe acuerdo escrito con ventas: tiempo de respuesta, criterio de aceptación, motivo de rechazo',
   'Cuando ventas descarta un lead, el motivo queda registrado y alguien lo revisa',
   'Existe calificación por puntaje, en vez de entregar todos los leads igual',
   'Hay cadencia formal de revisión conjunta de pipeline entre marketing y ventas',
   'Está definido quién decide la inversión digital y quién resuelve un desacuerdo',
   'La aprobación de estrategia tiene una ruta clara, sin consenso difuso']},
- {id:'mA8',label:'Gente y capacidades',w:5,items:[
+ {id:'a8',label:'Gente y capacidades',w:5,items:[
   'Alguien del equipo ha administrado presupuesto de pauta digital previamente',
   'Existe un rol dedicado a operación y datos de marketing',
   'La mayor parte del tiempo del equipo es ejecución, no reportes ni solicitudes internas',
@@ -313,7 +314,7 @@ function renderA(){
     var D = DIMS[d];
     h += '<div class="card"><h2>'+esc(D.label)+'<span class="w">peso '+D.w+'%</span></h2><div class="body">';
     if(D.src==='lineas') h += '<div class="intro">'+esc(D.desc)+'</div>';
-    else for(var i=0;i<D.items.length;i++) h += itemHTML(D.id+'_'+i, D.items[i]);
+    else for(var i=0;i<D.items.length;i++) h += itemHTML(D.id+'_'+(i+1), D.items[i]);
     h += '</div></div>';
   }
   $('cuestA').innerHTML = '<div class="card"><h2>Paso 4 · Capacidad de la organización<span class="w">'+
@@ -350,14 +351,14 @@ function renderPick(){
 
 function lineProgress(id){
   var t = PMF.length+ESC.length, n = 0, i;
-  for(i=0;i<PMF.length;i++) if(S.sc['L'+id+'_p'+i]!==undefined) n++;
-  for(i=0;i<ESC.length;i++) if(S.sc['L'+id+'_e'+i]!==undefined) n++;
+  for(i=0;i<PMF.length;i++) if(S.sc['L'+id+'_p'+(i+1)]!==undefined) n++;
+  for(i=0;i<ESC.length;i++) if(S.sc['L'+id+'_e'+(i+1)]!==undefined) n++;
   return {n:n,t:t};
 }
 
 function headText(L){
-  var p = lineProgress(L.id), r = lineScore(L.id);
-  return p.n+' de '+p.t + (r.pmf===null?'' : ' · PMF '+r.pmf.toFixed(2)+' · '+r.etapa);
+  var p = lineProgress(L.id);
+  return p.n + ' de ' + p.t;
 }
 
 function renderB(){
@@ -376,9 +377,9 @@ function renderB(){
         '<span class="r" id="lbr-'+L.id+'">'+esc(headText(L))+'</span></div>'+
       '<div class="lb-c'+op+'" id="lbc-'+L.id+'">'+
         '<div class="sec">Evidencia de mercado</div><div class="body">';
-    for(var j=0;j<PMF.length;j++) h += itemHTML('L'+L.id+'_p'+j, PMF[j]);
+    for(var j=0;j<PMF.length;j++) h += itemHTML('L'+L.id+'_p'+(j+1), PMF[j]);
     h += '</div><div class="sec">Escalabilidad digital</div><div class="body">';
-    for(var k=0;k<ESC.length;k++) h += itemHTML('L'+L.id+'_e'+k, ESC[k]);
+    for(var k=0;k<ESC.length;k++) h += itemHTML('L'+L.id+'_e'+(k+1), ESC[k]);
     h += '</div></div></div>';
   }
   $('cuestB').innerHTML = h;
@@ -407,8 +408,8 @@ function avg(keys){
 
 function lineScore(id){
   var p=[],e=[],i;
-  for(i=0;i<PMF.length;i++) p.push('L'+id+'_p'+i);
-  for(i=0;i<ESC.length;i++) e.push('L'+id+'_e'+i);
+  for(i=0;i<PMF.length;i++) p.push('L'+id+'_p'+(i+1));
+  for(i=0;i<ESC.length;i++) e.push('L'+id+'_e'+(i+1));
   var a=avg(p), b=avg(e), et='—';
   if(a!==null) et = a<=1?'Sin PMF' : a<=1.8?'PMF emergente' : a<=2.4?'PMF validado' : 'Listo para escalar';
   return {pmf:a, esc:b, etapa:et};
@@ -422,7 +423,7 @@ function dimScore(D){
     var s=0; for(var j=0;j<vals.length;j++) s+=vals[j];
     return s/vals.length;
   }
-  var keys=[]; for(var k=0;k<D.items.length;k++) keys.push(D.id+'_'+k);
+  var keys=[]; for(var k=0;k<D.items.length;k++) keys.push(D.id+'_'+(k+1));
   return avg(keys);
 }
 
@@ -434,7 +435,7 @@ function totalItems(){
 function doneItems(){
   var n=0,i,k;
   for(i=0;i<DIMS.length;i++){ var D=DIMS[i]; if(!D.items) continue;
-    for(k=0;k<D.items.length;k++) if(S.sc[D.id+'_'+k]!==undefined) n++; }
+    for(k=0;k<D.items.length;k++) if(S.sc[D.id+'_'+(k+1)]!==undefined) n++; }
   var act=activeLines();
   for(i=0;i<act.length;i++){ var p=lineProgress(act[i].id); n+=p.n; }
   return n;
@@ -461,69 +462,11 @@ function colorOf(v){ return COL[Math.max(0,Math.min(3,Math.round(v)))]; }
 
 function render(){
   var C = compute();
-  $('s-num').textContent = C.score===null?'—':C.score;
-  $('s-lv').textContent  = C.nivel||'Sin datos';
-  $('s-sub').textContent = C.avg===null?'Promedio ponderado —':'Promedio ponderado '+C.avg.toFixed(2)+' de 3';
-  var t=totalItems(), d=doneItems();
-  $('p-txt').textContent = d+' de '+t;
-  $('p-fl').style.width = (t? (d/t)*100 : 0)+'%';
-  var vb = $('s-veto');
-  if(C.vetoed){ vb.style.display='block'; vb.textContent='Datos y atribución está en 0 o 1. Sin medición no es posible verificar ningún resultado, así que el nivel se fija en Inicial sin importar el ponderado.'; }
-  else vb.style.display='none';
-
-  var h='';
-  for(var i=0;i<C.res.length;i++){
-    var R=C.res[i], has=R.v!==null, c=has?colorOf(R.v):'#94a3b8', p=has?(R.v/3)*100:0;
-    h += '<div class="bar"><div class="t"><span>'+esc(R.d.label)+'</span><span style="color:'+c+'">'+(has?R.v.toFixed(2):'—')+'/3</span></div>'+
-      '<div class="tr"><div class="fl" style="width:'+p+'%;background:'+c+'"></div></div></div>';
-  }
-  $('s-bars').innerHTML = h;
-  renderVerdict(C);
-}
-
-function renderVerdict(C){
-  var v = $('verdict');
-  if(C.avg===null){ v.innerHTML='<div class="empty">Responda al menos una dimensión para ver la lectura.</div>'; return; }
-  var h = '<h3>Nivel de madurez</h3><p><b>'+C.nivel+'</b> · ponderado '+C.avg.toFixed(2)+' de 3 · score '+C.score+' de 100'+
-    (C.vetoed?'<span class="pill">medición insuficiente</span>':'')+'</p>';
-
-  if(C.weakest) h += '<h3>Dimensión más débil</h3><p>'+esc(C.weakest.d.label)+' en '+C.weakest.v.toFixed(2)+
-    '. El nivel operativo real lo marca esta dimensión, no el promedio: lo que dependa de ella no se sostiene por encima de su puntaje.</p>';
-
-  if(C.altos){
-    var pct = Math.round((C.decl/C.altos)*100);
-    h += '<h3>Calidad del sustento</h3><p>'+C.decl+' de '+C.altos+' reactivos calificados en 2 o 3 quedaron sin sustento anotado ('+pct+'%). '+
-      (pct>33?'Supera un tercio, así que conviene tratar el resultado como declarado y verificarlo antes de tomar decisiones de inversión.':'Por debajo de un tercio: el resultado se sostiene razonablemente.')+'</p>';
-  }
-
-  var conPMF=0, det='', act=activeLines();
-  for(var i=0;i<act.length;i++){
-    var L=act[i], r=lineScore(L.id);
-    if(r.pmf===null) continue;
-    if(r.pmf>1.8) conPMF++;
-    det += '<li>'+esc(L.n||'Sin nombre')+': evidencia de mercado '+r.pmf.toFixed(2)+' ('+r.etapa+')'+
-      (r.esc!==null?' · escalabilidad '+r.esc.toFixed(2):'')+'</li>';
-  }
-  if(det) h += '<h3>'+(S.scope==='one'?'Línea evaluada':'Portafolio')+'</h3><ul style="margin:0 0 0 18px">'+det+'</ul>';
-
-  h += '<h3>Recomendación de alcance</h3><p>';
-  if(C.nivel==='Inicial'){
-    h += conPMF? 'Diagnóstico y línea base, más un piloto acotado a las líneas que sí muestran evidencia de mercado. Un canal, un mercado.'
-               : 'Diagnóstico y línea base antes que ejecución. Sin cifra base verificable, cualquier meta de crecimiento sería estimada y no comparable.';
-  } else if(C.nivel==='Emergente'){
-    h += conPMF? 'Línea base más estrategia acotada a las líneas con evidencia de mercado, con criterios escritos de expansión.'
-               : 'Línea base más trabajo de validación de oferta antes que de canal. Invertir en medios ahora amplifica un mensaje que el mercado todavía no acepta.';
-  } else {
-    h += conPMF? 'Un alcance amplio se justifica, priorizado por línea según madurez. La restricción ya no son los fundamentos.'
-               : 'La restricción no está en marketing, está en el portafolio: más inversión en demanda no corrige una oferta sin evidencia de mercado.';
-  }
-  h += '</p>';
-
-  var na=0; for(var k in S.al) if(S.al[k]) na++;
-  if(na) h += '<h3>Verificaciones marcadas</h3><p>'+na+' de '+VERIF.length+'. '+
-    (na>=3?'Tres o más indican que el resultado descansa parcialmente en estimaciones. Conviene resolver esos puntos antes de comprometer inversión.'
-          :'Por debajo del umbral de tres: el diagnóstico se apoya mayormente en datos.')+'</p>';
-  v.innerHTML = h;
+  var t = totalItems(), d = doneItems();
+  $('p-txt').textContent = d + ' de ' + t + ' reactivos';
+  $('p-pct').textContent = (t ? Math.round((d/t)*100) : 0) + '%';
+  $('p-fl').style.width = (t ? (d/t)*100 : 0) + '%';
+  if (typeof chk === 'function') chk();
 }
 
 function setSc(k,v){
@@ -564,11 +507,11 @@ function delLine(i){
 }
 
 function exportar(){
-  var d = {v:2, emp:$('meta-emp').value, fec:$('meta-fec').value, S:S, uid:uid};
+  var d = {v:3, resp:datos(), S:S, uid:uid};
   var b = new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(b);
-  a.download = 'madurez-'+((d.emp||'diagnostico').toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'.json';
+  a.download = 'madurez-'+(((d.resp&&d.resp.company)||'diagnostico').toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'.json';
   a.click();
 }
 function importar(e){
@@ -579,15 +522,105 @@ function importar(e){
       var d = JSON.parse(ev.target.result);
       S = d.S; uid = d.uid||0;
       if(!S.open) S.open={}; if(!S.scope) S.scope='all'; if(S.pick===undefined) S.pick=null;
-      $('meta-emp').value = d.emp||''; $('meta-fec').value = d.fec||'';
+      var R = d.resp || {};
+      ['company','name','role','email','date','industry'].forEach(function(k){
+        var el = $('f-'+k); if(el) el.value = R[k] || '';
+      });
       renderLines(); renderPick(); renderA(); renderB(); renderAl(); render();
     }catch(_){ alert('No se pudo leer el archivo.'); }
   };
   r.readAsText(f); e.target.value='';
 }
 
+
+// ─────────────────────────────────────────────────────────────
+// FORM_SLUG debe coincidir EXACTAMENTE con el slug del admin
+var FORM_SLUG = 'madurez-marketing';
+// ─────────────────────────────────────────────────────────────
+
+var enviado = false;
+
+function datos(){
+  var g = function(k){ var e = $('f-'+k); return e ? e.value.trim() : ''; };
+  return {company:g('company'), name:g('name'), role:g('role'),
+          email:g('email'), date:g('date'), industry:g('industry')};
+}
+function valido(){
+  var d = datos();
+  return !!(d.company && d.name && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email));
+}
+function chk(){
+  var b = $('send-btn'), st = $('send-st');
+  if(!b || enviado) return;
+  var ok = valido(), n = doneItems(), t = totalItems();
+  b.disabled = !ok;
+  st.textContent = !ok
+    ? 'Complete empresa, nombre y correo para poder enviar.'
+    : (n < t ? 'Puede enviar con ' + n + ' de ' + t + ' respondidos, o completar los que faltan.'
+             : 'Todos los reactivos están respondidos.');
+}
+
+// Los puntajes se calculan y se guardan, pero no se muestran a quien responde
+function resumen(){
+  var C = compute(), out = {global:null, score:null, nivel:null, veto:false, dimensiones:{}, lineas:[]};
+  if(C){
+    out.global = C.avg === null ? null : Math.round(C.avg*100)/100;
+    out.score = C.score; out.nivel = C.nivel; out.veto = C.vetoed;
+    for(var i=0;i<C.res.length;i++){
+      var R = C.res[i];
+      out.dimensiones[R.d.id] = {label:R.d.label, peso:R.d.w,
+        valor: R.v === null ? null : Math.round(R.v*100)/100};
+    }
+  }
+  var act = activeLines();
+  for(var k=0;k<act.length;k++){
+    var L = act[k], r = lineScore(L.id);
+    out.lineas.push({nombre:L.n, ingreso:L.p, vende:L.v,
+      pmf: r.pmf===null?null:Math.round(r.pmf*100)/100,
+      escalabilidad: r.esc===null?null:Math.round(r.esc*100)/100,
+      etapa: r.etapa});
+  }
+  return out;
+}
+
+function paquete(){
+  var marc = [], k;
+  for(k in S.al) if(S.al[k]) marc.push(VERIF[k]);
+  var n = doneItems(), t = totalItems();
+  return {
+    identificacion: datos(),
+    alcance: S.scope === 'one' ? 'una linea' : 'portafolio completo',
+    lineas: S.lines,
+    puntajes: S.sc,
+    sustento: S.ev,
+    verificaciones: marc,
+    resultado: resumen(),
+    avance: {respondidos:n, total:t, porcentaje: t ? Math.round((n/t)*100) : 0},
+    instrumento: 'madurez-marketing-digital-v1'
+  };
+}
+
+function enviar(){
+  if(enviado || !valido()) return;
+  var b = $('send-btn'), st = $('send-st');
+  b.disabled = true; b.textContent = 'Enviando…';
+  fetch('/.netlify/functions/save-custom-response', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ slug: FORM_SLUG, data: paquete() })
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res && res.success){
+      enviado = true; b.style.display = 'none';
+      st.innerHTML = '<div class="ok"><b>Respuestas recibidas.</b> Gracias por completar el diagnóstico. Revisaremos los resultados y los comentaremos en la sesión.</div>';
+    } else { falla(b, st); }
+  }).catch(function(){ falla(b, st); });
+}
+function falla(b, st){
+  b.disabled = false; b.textContent = 'Reintentar envío';
+  st.innerHTML = '<div class="er"><b>No se pudieron enviar.</b> Intente de nuevo. Si vuelve a fallar, use <b>Guardar copia</b> para no perder el trabajo.</div>';
+}
+
 addLine();
-renderA(); renderAl(); render();
+renderA(); renderAl(); render(); chk();
 </script>
 </body>
 </html>
