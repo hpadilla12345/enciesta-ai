@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnóstico de Madurez en Marketing Digital</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,'Segoe UI',Arial,sans-serif;background:#f1f5f9;color:#1e293b;font-size:15px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+header{background:linear-gradient(135deg,#0b1a30,#1a3a6b);color:#fff;padding:34px 0 30px;margin-bottom:22px}
+header .wrap{padding-bottom:0}
+.kicker{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#a7f3d0;margin-bottom:9px}
+h1{font-size:25px;font-weight:800;letter-spacing:-.01em}
+header p{font-size:13px;color:rgba(255,255,255,.72);margin-top:8px;max-width:780px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:18px;overflow:hidden}
+.card>h2{font-size:15px;font-weight:800;color:#0b1a30;padding:16px 22px;border-bottom:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card>h2 .w{font-family:ui-monospace,monospace;font-size:10px;font-weight:700;color:#0d9488;background:#f0fdf9;border:1px solid #a7f3d0;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.body{padding:6px 22px 18px}
+.intro{font-size:13px;color:#64748b;padding:14px 0 6px}
+.item{display:grid;grid-template-columns:1fr 172px;gap:14px;padding:13px 0;border-bottom:1px solid #f1f5f9;align-items:start}
+.item:last-child{border-bottom:none}
+@media(max-width:640px){.item{grid-template-columns:1fr}}
+.qt{font-size:14px}
+.ev{width:100%;margin-top:7px;font-size:12px;font-family:inherit;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:6px 9px}
+.ev::placeholder{color:#94a3b8}
+.ev:focus{outline:none;border-color:#0d9488;background:#fff}
+.sc{display:flex;gap:5px}
+.sc button{flex:1;height:38px;border:1px solid #cbd5e1;background:#fff;border-radius:7px;font-family:ui-monospace,monospace;font-size:13px;font-weight:700;color:#94a3b8;cursor:pointer;transition:.12s}
+.sc button:hover{border-color:#0d9488;color:#0d9488}
+.sc button.on{color:#fff;border-color:transparent}
+.sc button.on[data-v="0"]{background:#dc2626}
+.sc button.on[data-v="1"]{background:#f59e0b}
+.sc button.on[data-v="2"]{background:#0d9488}
+.sc button.on[data-v="3"]{background:#1d4ed8}
+.side{position:sticky;top:18px}
+.prog{margin-top:14px;text-align:left}
+.prog .t{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;display:flex;justify-content:space-between}
+.prog .tr{background:rgba(255,255,255,.15);border-radius:99px;height:5px;overflow:hidden}
+.prog .fl{height:100%;background:#a7f3d0;border-radius:99px;transition:width .25s}
+.bar{margin-bottom:11px}
+.bar .t span:last-child{font-family:ui-monospace,monospace;font-weight:700;white-space:nowrap}
+.lines{padding:6px 22px 18px}
+.ln{display:grid;grid-template-columns:1fr 92px 1fr 34px;gap:9px;padding:9px 0;border-bottom:1px solid #f1f5f9;align-items:center}
+@media(max-width:640px){.ln{grid-template-columns:1fr}}
+.ln input{width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;color:#1e293b}
+.ln input:focus{outline:none;border-color:#0d9488}
+.ln button{height:32px;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:6px;cursor:pointer;font-size:15px;line-height:1}
+.btn{font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:7px;border:1px solid #0d9488;background:#0d9488;color:#fff;cursor:pointer}
+.btn.g{background:#fff;color:#0b1a30;border-color:#cbd5e1}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.opts{display:flex;flex-direction:column;gap:9px;padding:6px 0 4px}
+.opt{display:flex;gap:11px;align-items:flex-start;border:1px solid #e2e8f0;border-radius:9px;padding:12px 14px;cursor:pointer;transition:.12s}
+.opt:hover{border-color:#0d9488}
+.opt.on{border-color:#0d9488;background:#f0fdf9}
+.opt input{margin-top:3px;accent-color:#0d9488;width:16px;height:16px}
+.opt .d{font-size:12.5px;color:#64748b;margin-top:2px}
+.opt b{font-size:14px;font-weight:700;color:#0b1a30}
+select{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;color:#1e293b;width:100%;max-width:400px;margin-top:10px}
+.lineblock{border:1px solid #e2e8f0;border-radius:10px;margin:14px 0;overflow:hidden}
+.lb-h{background:#0b1a30;color:#fff;padding:13px 16px;font-size:13.5px;font-weight:700;display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;user-select:none}
+.lb-h:hover{background:#12294a}
+.lb-h .lft{display:flex;align-items:center;gap:10px;min-width:0}
+.lb-h .ar{font-size:11px;color:#a7f3d0;transition:transform .18s;display:inline-block}
+.lb-h.open .ar{transform:rotate(90deg)}
+.lb-h .r{font-family:ui-monospace,monospace;font-size:10.5px;color:#a7f3d0;font-weight:400;white-space:nowrap;text-align:right}
+.lb-c{display:none}
+.lb-c.open{display:block}
+.sec{font-size:11px;font-family:ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#64748b;background:#f8fafc;padding:8px 16px;border-bottom:1px solid #e2e8f0;border-top:1px solid #e2e8f0}
+.lineblock .body{padding:2px 16px 14px}
+.al{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:13.5px;align-items:flex-start}
+.al:last-child{border-bottom:none}
+.al input{margin-top:3px;width:16px;height:16px;accent-color:#0d9488;cursor:pointer;flex:0 0 16px}
+.al label{cursor:pointer;color:#475569}
+.empty{color:#94a3b8;font-size:13px;padding:12px 0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:6px 0 4px}
+.fields label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:#475569}
+.fields label b{color:#dc2626;font-weight:700}
+.fields input{font-family:inherit;font-size:14px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:7px;color:#1e293b;font-weight:400}
+.fields input:focus{outline:none;border-color:#0d9488}
+.send{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:14px}
+.prog2{margin-bottom:14px}
+.prog2 .t{font-size:11px;color:#64748b;margin-bottom:5px;display:flex;justify-content:space-between;font-family:ui-monospace,monospace}
+.prog2 .tr{background:#e2e8f0;border-radius:99px;height:6px;overflow:hidden}
+.prog2 .fl{height:100%;background:#0d9488;border-radius:99px;transition:width .25s}
+.send .st{font-size:12.5px;color:#64748b;line-height:1.55;margin-bottom:12px}
+.send button{width:100%;font-family:inherit;font-size:14px;font-weight:700;padding:12px;border-radius:8px;border:none;background:#0d9488;color:#fff;cursor:pointer}
+.send button:disabled{background:#cbd5e1;cursor:not-allowed}
+.send .ok{background:#f0fdf9;border:1px solid #a7f3d0;color:#0f766e;font-size:13px;padding:12px 14px;border-radius:8px;line-height:1.55}
+.send .er{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:13px;padding:12px 14px;border-radius:8px;line-height:1.55}
+@media print{
+ body{background:#fff}.side{position:static}.layout{grid-template-columns:1fr}
+ .sc button:not(.on){display:none}.sc button.on{flex:0 0 44px}
+ .tools,.ln button,.lb-h .ar{display:none}.lb-c{display:block!important}
+ .card,.lineblock{break-inside:avoid;border-color:#cbd5e1}
+}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+<div class="kicker">Diagnóstico</div>
+<h1>Madurez en Marketing Digital y Generación de Demanda</h1>
+<p>Cada reactivo se califica de 0 a 3. El puntaje es obligatorio; el campo de sustento es opcional y sirve para anotar en qué se basa la respuesta. Contestar con precisión importa más que contestar alto: el valor del diagnóstico depende de que refleje la realidad operativa.</p>
+</div></header>
+
+<div class="wrap"><div class="layout">
+<div>
+
+<div class="card">
+  <h2>Datos de quien responde<span class="w">requeridos</span></h2>
+  <div class="lines">
+    <div class="intro">El reporte de resultados se envía por correo al terminar. Los campos marcados con asterisco son necesarios para poder generarlo.</div>
+    <div class="fields">
+      <label>Empresa <b>*</b><input id="f-company" placeholder="Razón social o nombre comercial" oninput="chk()"></label>
+      <label>Nombre <b>*</b><input id="f-name" placeholder="Nombre y apellido" oninput="chk()"></label>
+      <label>Cargo<input id="f-role" placeholder="Ej. Director de Marketing" oninput="chk()"></label>
+      <label>Correo <b>*</b><input id="f-email" type="email" placeholder="nombre@empresa.com" oninput="chk()"></label>
+      <label>Fecha<input id="f-date" type="date" oninput="chk()"></label>
+      <label>Sector<input id="f-industry" placeholder="Ej. Tecnología, Manufactura" oninput="chk()"></label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Paso 1 · Líneas de negocio</h2>
+  <div class="lines">
+    <div class="intro">Enliste las líneas de negocio o servicio tal como se nombran internamente. Si el porcentaje de ingreso no se conoce con precisión, déjelo en blanco: es preferible el vacío a un dato inventado.</div>
+    <div id="lineas"></div>
+    <div class="tools"><button class="btn" onclick="addLine()">+ Agregar línea</button></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Paso 2 · Alcance de la evaluación</h2>
+  <div class="body">
+    <div class="intro">Es normal que las líneas de un mismo portafolio estén en etapas distintas de madurez. Puede evaluarlas todas para tener el panorama completo, o concentrarse en una sola si el diagnóstico busca decidir sobre esa.</div>
+    <div class="opts">
+      <label class="opt" id="op-all" onclick="setScope('all')">
+        <input type="radio" name="scope" value="all" checked>
+        <div><b>Todas las líneas de negocio</b>
+        <div class="d">Panorama completo del portafolio. Permite comparar líneas entre sí y detectar en cuáles conviene invertir primero.</div></div>
+      </label>
+      <label class="opt" id="op-one" onclick="setScope('one')">
+        <input type="radio" name="scope" value="one">
+        <div><b>Una línea específica</b>
+        <div class="d">Diagnóstico enfocado. Útil cuando ya está decidido dónde se quiere crecer y se busca saber si esa oferta está lista.</div></div>
+      </label>
+    </div>
+    <div id="scope-pick"></div>
+  </div>
+</div>
+
+<div id="cuestB"></div>
+<div id="cuestA"></div>
+
+<div class="card">
+  <h2>Verificaciones de consistencia</h2>
+  <div class="body">
+    <div class="intro">Marque las afirmaciones que describan su situación. No son fallas: son señales que ayudan a calibrar el diagnóstico y a distinguir lo que está medido de lo que se estima.</div>
+    <div id="alarmas"></div>
+  </div>
+</div>
+
+
+
+</div>
+
+<div class="side">
+  <div class="send">
+    <div style="font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#0d9488;margin-bottom:10px">Avance</div>
+    <div class="prog2"><div class="t"><span id="p-txt">0 de 0</span><span id="p-pct">0%</span></div>
+      <div class="tr"><div class="fl" id="p-fl" style="width:0%"></div></div></div>
+    <div class="st" id="send-st">Complete empresa, nombre y correo para poder enviar.</div>
+    <button id="send-btn" disabled onclick="enviar()">Enviar respuestas</button>
+  </div>
+  <div class="tools">
+    <button class="btn g" onclick="exportar()">Guardar copia</button>
+    <button class="btn g" onclick="document.getElementById('imp').click()">Cargar copia</button>
+    <button class="btn g" onclick="window.print()">Imprimir</button>
+  </div>
+  <input type="file" id="imp" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+</div></div>
+
+<script>
+var DIMS = [
+ {id:'a1',label:'Oferta y product-market fit',w:20,src:'lineas',
+  desc:'Esta dimensión se calcula con las respuestas del Paso 3, sobre las líneas de negocio evaluadas. No se responde aquí.'},
+ {id:'a2',label:'Datos y atribución',w:20,veto:true,items:[
+  'Conocemos el número absoluto de leads del último año y podemos recuperar la fuente',
+  'Ese número se desglosa por canal: orgánico, pauta, social, email, referido',
+  'Existe una convención de UTMs documentada y se aplica de forma consistente',
+  'El formulario del sitio escribe directo al CRM, sin pasos manuales intermedios',
+  'Hay definiciones escritas de lead calificado por marketing y por ventas, aplicadas en el sistema',
+  'Podemos rastrear un lead digital desde el clic hasta el ingreso cerrado',
+  'Conocemos el costo por lead calificado, desglosado por canal',
+  'La analítica web y la consola de búsqueda tienen conversiones configuradas y alguien las revisa',
+  'Existe un modelo de atribución definido y explícito']},
+ {id:'a3',label:'KPIs y medición',w:15,items:[
+  'Nuestros indicadores principales son de demanda y negocio, no de alcance o seguidores',
+  'Cada indicador tiene meta numérica y línea base de dónde parte',
+  'Hay una cadencia fija de revisión, con fecha en el calendario',
+  'La revisión incluye a ventas y a dirección, no solo a marketing',
+  'Existe un tablero único al que todos miran, en vez de reportes paralelos',
+  'Podemos citar una decisión concreta que se tomó a partir de un indicador']},
+ {id:'a4',label:'Canales digitales',w:15,items:[
+  'Pauta de búsqueda: cuenta activa, estructura por oferta, negativas, costo por lead conocido',
+  'SEO: contenido con intención de búsqueda, posiciones conocidas, técnico atendido',
+  'Visibilidad en motores de IA: sabemos si la marca aparece en respuestas generativas de nuestra categoría',
+  'Pauta social profesional: inversión sostenida con segmentación por cargo, industria o cuenta',
+  'Pauta en redes masivas: se usa con criterio y con medición, no por inercia',
+  'Orgánico social: hay liderazgo de pensamiento con voceros, no solo publicación institucional',
+  'ABM: existe lista de cuentas nombradas trabajada por marketing y ventas en conjunto',
+  'Email y nutrición: hay secuencias para el lead que aún no está listo, con base propia y consentimiento',
+  'Eventos con captura digital: el lead del evento entra al sistema con su origen trazado']},
+ {id:'a5',label:'Objetivos',w:10,items:[
+  'Existen objetivos de marketing escritos y aprobados para el período en curso',
+  'Cada objetivo tiene línea base además de meta',
+  'Están expresados como resultado de negocio, no como actividad',
+  'Existe meta explícita de contribución de marketing al pipeline',
+  'Si hay objetivos de marca, podemos citar una decisión tomada con esa métrica',
+  'Hay responsable designado por objetivo y cadencia formal de revisión']},
+ {id:'a6',label:'Activos digitales',w:8,items:[
+  'El sitio opera como activo de conversión, no como folleto institucional',
+  'Podemos publicar páginas de aterrizaje sin depender de un tercero, en días',
+  'El desempeño técnico es adecuado en velocidad, móvil e indexación',
+  'Existe base propia de contactos, segmentada y con consentimiento vigente',
+  'Las herramientas contratadas se usan realmente, no solo se pagan',
+  'Los píxeles de conversión están instalados y disparando correctamente',
+  'Hay gobierno de contenido definido si existen varios sitios o idiomas']},
+ {id:'a7',label:'Procesos y gobierno',w:7,items:[
+  'Existe acuerdo escrito con ventas: tiempo de respuesta, criterio de aceptación, motivo de rechazo',
+  'Cuando ventas descarta un lead, el motivo queda registrado y alguien lo revisa',
+  'Existe calificación por puntaje, en vez de entregar todos los leads igual',
+  'Hay cadencia formal de revisión conjunta de pipeline entre marketing y ventas',
+  'Está definido quién decide la inversión digital y quién resuelve un desacuerdo',
+  'La aprobación de estrategia tiene una ruta clara, sin consenso difuso']},
+ {id:'a8',label:'Gente y capacidades',w:5,items:[
+  'Alguien del equipo ha administrado presupuesto de pauta digital previamente',
+  'Existe un rol dedicado a operación y datos de marketing',
+  'La mayor parte del tiempo del equipo es ejecución, no reportes ni solicitudes internas',
+  'La operación no depende de recursos temporales para actividades centrales',
+  'Si se aprobara un plan ambicioso, hay quién lo ejecute con tiempo disponible']}
+];
+
+var PMF = ['Clientes distintos: varios compradores en los últimos 12 meses, no uno o dos',
+ 'Recompra y retención: los clientes repiten, renuevan o amplían',
+ 'Referidos: llegan clientes por recomendación, sin que los busquemos',
+ 'Demanda entrante: el comprador llega sabiendo que lo necesita, sin explicarle desde cero',
+ 'Concentración: el ingreso no depende mayoritariamente de un solo cliente',
+ 'Integridad de precio: se cierra al precio propuesto, sin descuento fuerte',
+ 'Tasa de éxito: conocemos cuántas propuestas ganamos y por qué perdemos las demás',
+ 'Referenciabilidad: hay clientes dispuestos a dar referencia con nombre y métrica',
+ 'Trayectoria: la línea creció el último año y conocemos la causa',
+ 'Tiempo de convencimiento: el ciclo se acorta, no se alarga'];
+
+var ESC = ['Empaquetado: ticket, alcance y entregable estandarizados',
+ 'Volumen de búsqueda: existe demanda calificada, el mercado ya nombra la categoría',
+ 'Comprador identificable: conocemos cargo, industria y tamaño de empresa',
+ 'Diferenciador articulado: tres vendedores darían la misma razón de compra',
+ 'Materiales: hay casos y contenido propios de la línea, no material genérico'];
+
+var VERIF = ['Para listar nuestras líneas de negocio tuvimos que ponernos de acuerdo entre varias personas',
+ 'No conocemos con precisión qué porcentaje del ingreso aporta cada línea',
+ 'Hay ofertas en nuestro material comercial que no aparecen en la lista anterior, o al revés',
+ 'Buscamos alguna de las cifras de este cuestionario y no logramos recuperarla',
+ 'Conocemos algunos porcentajes pero no el número absoluto del que provienen',
+ 'Distintas áreas de la empresa manejan cifras distintas para el mismo indicador',
+ 'No hay una persona claramente responsable de los datos de marketing',
+ 'Varios de nuestros objetivos están redactados como actividades más que como resultados',
+ 'Los indicadores que más reportamos son de alcance, visitas o seguidores',
+ 'Tenemos una ambición declarada de posicionamiento sin una métrica que la mida',
+ 'Nuestros clientes rara vez vuelven a comprar después del primer proyecto',
+ 'Descontar de forma significativa es una condición habitual para cerrar',
+ 'Hay un canal que consideramos exitoso, pero sin medición que lo respalde',
+ 'Probamos pauta digital en el pasado, se detuvo, y no tenemos claro por qué falló',
+ 'Publicar una página de aterrizaje nos toma semanas o depende de un proveedor externo',
+ 'Nadie en el equipo ha administrado antes un presupuesto de medios digitales'];
+
+var BANDS = [{max:1.0,l:'Inicial'},{max:1.8,l:'Emergente'},{max:2.4,l:'Estructurado'},{max:3.0,l:'Gobernado'}];
+var COL = ['#dc2626','#f59e0b','#0d9488','#1d4ed8'];
+
+var S = {sc:{}, ev:{}, lines:[], al:{}, scope:'all', pick:null, open:{}};
+var uid = 0;
+
+function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function $(i){return document.getElementById(i);}
+
+function scGroup(key){
+  var v = S.sc[key], b = '';
+  for(var i=0;i<4;i++) b += '<button data-v="'+i+'" class="'+(v===i?'on':'')+'" onclick="setSc(\''+key+'\','+i+')">'+i+'</button>';
+  return b;
+}
+function itemHTML(key, texto){
+  return '<div class="item"><div><div class="qt">'+esc(texto)+'</div>'+
+    '<input class="ev" placeholder="¿En qué se basa? (opcional)" value="'+esc(S.ev[key])+'" oninput="setEv(\''+key+'\',this.value)"></div>'+
+    '<div class="sc" id="sc-'+key+'">'+scGroup(key)+'</div></div>';
+}
+
+function activeLines(){
+  if(S.scope==='one'){
+    for(var i=0;i<S.lines.length;i++) if(S.lines[i].id===S.pick) return [S.lines[i]];
+    return [];
+  }
+  return S.lines;
+}
+
+function renderA(){
+  var h = '';
+  for(var d=0;d<DIMS.length;d++){
+    var D = DIMS[d];
+    h += '<div class="card"><h2>'+esc(D.label)+'<span class="w">peso '+D.w+'%</span></h2><div class="body">';
+    if(D.src==='lineas') h += '<div class="intro">'+esc(D.desc)+'</div>';
+    else for(var i=0;i<D.items.length;i++) h += itemHTML(D.id+'_'+(i+1), D.items[i]);
+    h += '</div></div>';
+  }
+  $('cuestA').innerHTML = '<div class="card"><h2>Paso 4 · Capacidad de la organización<span class="w">'+
+    'nivel empresa</span></h2><div class="body"><div class="intro">Estas dimensiones se responden una sola vez para toda la organización, sin importar cuántas líneas se estén evaluando.</div></div></div>' + h;
+}
+
+function renderLines(){
+  var h = '';
+  if(!S.lines.length) h = '<div class="empty">Sin líneas registradas. Agregue al menos una para poder continuar.</div>';
+  for(var i=0;i<S.lines.length;i++){
+    var L = S.lines[i];
+    h += '<div class="ln">'+
+      '<input placeholder="Nombre de la línea" value="'+esc(L.n)+'" oninput="setLine('+i+',\'n\',this.value)">'+
+      '<input placeholder="% ingreso" value="'+esc(L.p)+'" oninput="setLine('+i+',\'p\',this.value)">'+
+      '<input placeholder="Quién la vende" value="'+esc(L.v)+'" oninput="setLine('+i+',\'v\',this.value)">'+
+      '<button onclick="delLine('+i+')" title="Quitar">&times;</button></div>';
+  }
+  $('lineas').innerHTML = h;
+}
+
+function renderPick(){
+  $('op-all').className = 'opt'+(S.scope==='all'?' on':'');
+  $('op-one').className = 'opt'+(S.scope==='one'?' on':'');
+  if(S.scope!=='one'){ $('scope-pick').innerHTML=''; return; }
+  var o = '';
+  for(var i=0;i<S.lines.length;i++){
+    var L=S.lines[i];
+    o += '<option value="'+L.id+'"'+(S.pick===L.id?' selected':'')+'>'+esc(L.n||('Línea '+(i+1)))+'</option>';
+  }
+  $('scope-pick').innerHTML = S.lines.length
+    ? '<select onchange="setPick(this.value)">'+o+'</select>'
+    : '<div class="empty">Agregue primero una línea en el paso anterior.</div>';
+}
+
+function lineProgress(id){
+  var t = PMF.length+ESC.length, n = 0, i;
+  for(i=0;i<PMF.length;i++) if(S.sc['L'+id+'_p'+(i+1)]!==undefined) n++;
+  for(i=0;i<ESC.length;i++) if(S.sc['L'+id+'_e'+(i+1)]!==undefined) n++;
+  return {n:n,t:t};
+}
+
+function headText(L){
+  var p = lineProgress(L.id);
+  return p.n + ' de ' + p.t;
+}
+
+function renderB(){
+  var act = activeLines(), h = '';
+  h += '<div class="card"><h2>Paso 3 · Evidencia de mercado por línea<span class="w">'+
+    (act.length?act.length+(act.length>1?' líneas':' línea'):'sin líneas')+'</span></h2>'+
+    '<div class="body"><div class="intro">El product-market fit no mide qué tan bien empaquetada está la oferta, sino si el mercado la jala: si la compran, la repiten, la recomiendan y la pagan sin que haya que forzarla. Toque el encabezado de cada línea para desplegar sus reactivos.</div>';
+  if(!act.length) h += '<div class="empty">No hay líneas seleccionadas para evaluar.</div>';
+  h += '</div></div>';
+
+  for(var i=0;i<act.length;i++){
+    var L = act[i], op = S.open[L.id] ? ' open' : '';
+    h += '<div class="lineblock">'+
+      '<div class="lb-h'+op+'" id="lbh-'+L.id+'" onclick="toggle('+L.id+')">'+
+        '<span class="lft"><span class="ar">&#9656;</span><span>'+esc(L.n||'Línea sin nombre')+'</span></span>'+
+        '<span class="r" id="lbr-'+L.id+'">'+esc(headText(L))+'</span></div>'+
+      '<div class="lb-c'+op+'" id="lbc-'+L.id+'">'+
+        '<div class="sec">Evidencia de mercado</div><div class="body">';
+    for(var j=0;j<PMF.length;j++) h += itemHTML('L'+L.id+'_p'+(j+1), PMF[j]);
+    h += '</div><div class="sec">Escalabilidad digital</div><div class="body">';
+    for(var k=0;k<ESC.length;k++) h += itemHTML('L'+L.id+'_e'+(k+1), ESC[k]);
+    h += '</div></div></div>';
+  }
+  $('cuestB').innerHTML = h;
+}
+
+function toggle(id){
+  S.open[id] = !S.open[id];
+  var hd=$('lbh-'+id), cn=$('lbc-'+id);
+  if(hd) hd.className = 'lb-h'+(S.open[id]?' open':'');
+  if(cn) cn.className = 'lb-c'+(S.open[id]?' open':'');
+}
+
+function renderAl(){
+  var h = '';
+  for(var i=0;i<VERIF.length;i++)
+    h += '<div class="al"><input type="checkbox" id="al'+i+'" '+(S.al[i]?'checked':'')+' onchange="setAl('+i+',this.checked)">'+
+      '<label for="al'+i+'">'+esc(VERIF[i])+'</label></div>';
+  $('alarmas').innerHTML = h;
+}
+
+function avg(keys){
+  var s=0,n=0;
+  for(var i=0;i<keys.length;i++){ var v=S.sc[keys[i]]; if(v!==undefined&&v!==null){s+=v;n++;} }
+  return n? s/n : null;
+}
+
+function lineScore(id){
+  var p=[],e=[],i;
+  for(i=0;i<PMF.length;i++) p.push('L'+id+'_p'+(i+1));
+  for(i=0;i<ESC.length;i++) e.push('L'+id+'_e'+(i+1));
+  var a=avg(p), b=avg(e), et='—';
+  if(a!==null) et = a<=1?'Sin PMF' : a<=1.8?'PMF emergente' : a<=2.4?'PMF validado' : 'Listo para escalar';
+  return {pmf:a, esc:b, etapa:et};
+}
+
+function dimScore(D){
+  if(D.src==='lineas'){
+    var act=activeLines(), vals=[];
+    for(var i=0;i<act.length;i++){ var r=lineScore(act[i].id); if(r.pmf!==null) vals.push(r.pmf); }
+    if(!vals.length) return null;
+    var s=0; for(var j=0;j<vals.length;j++) s+=vals[j];
+    return s/vals.length;
+  }
+  var keys=[]; for(var k=0;k<D.items.length;k++) keys.push(D.id+'_'+(k+1));
+  return avg(keys);
+}
+
+function totalItems(){
+  var t=0;
+  for(var i=0;i<DIMS.length;i++) if(DIMS[i].items) t+=DIMS[i].items.length;
+  return t + activeLines().length*(PMF.length+ESC.length);
+}
+function doneItems(){
+  var n=0,i,k;
+  for(i=0;i<DIMS.length;i++){ var D=DIMS[i]; if(!D.items) continue;
+    for(k=0;k<D.items.length;k++) if(S.sc[D.id+'_'+(k+1)]!==undefined) n++; }
+  var act=activeLines();
+  for(i=0;i<act.length;i++){ var p=lineProgress(act[i].id); n+=p.n; }
+  return n;
+}
+
+function compute(){
+  var res=[], sw=0, acc=0, weakest=null, vetoed=false, decl=0, altos=0;
+  for(var i=0;i<DIMS.length;i++){
+    var D=DIMS[i], v=dimScore(D);
+    res.push({d:D,v:v});
+    if(v!==null){ sw+=D.w; acc+=v*D.w; if(weakest===null||v<weakest.v) weakest={d:D,v:v}; if(D.veto&&v<=1) vetoed=true; }
+  }
+  for(var k in S.sc){ if(S.sc[k]>=2){ altos++; if(!(S.ev[k]&&S.ev[k].trim())) decl++; } }
+  var avgW = sw? acc/sw : null, nivel=null;
+  if(avgW!==null){
+    if(vetoed) nivel = BANDS[0].l;
+    else { for(var b=0;b<BANDS.length;b++){ if(avgW<=BANDS[b].max){ nivel=BANDS[b].l; break; } } if(!nivel) nivel=BANDS[3].l; }
+  }
+  return {res:res, avg:avgW, nivel:nivel, vetoed:vetoed, weakest:weakest,
+          score: avgW===null?null:Math.round((avgW/3)*100), decl:decl, altos:altos};
+}
+
+function colorOf(v){ return COL[Math.max(0,Math.min(3,Math.round(v)))]; }
+
+function render(){
+  var C = compute();
+  var t = totalItems(), d = doneItems();
+  $('p-txt').textContent = d + ' de ' + t + ' reactivos';
+  $('p-pct').textContent = (t ? Math.round((d/t)*100) : 0) + '%';
+  $('p-fl').style.width = (t ? (d/t)*100 : 0) + '%';
+  if (typeof chk === 'function') chk();
+}
+
+function setSc(k,v){
+  if(S.sc[k]===v) delete S.sc[k]; else S.sc[k]=v;
+  var g=$('sc-'+k);
+  if(g){ var bs=g.getElementsByTagName('button');
+    for(var i=0;i<bs.length;i++) bs[i].className = (S.sc[k]===i?'on':''); }
+  if(k.charAt(0)==='L'){
+    var id = k.slice(1).split('_')[0], hd=$('lbr-'+id);
+    for(var j=0;j<S.lines.length;j++) if(String(S.lines[j].id)===id && hd) hd.textContent = headText(S.lines[j]);
+  }
+  render();
+}
+function setEv(k,v){ S.ev[k]=v; render(); }
+function setAl(i,v){ S.al[i]=v; render(); }
+function setLine(i,f,v){
+  S.lines[i][f]=v;
+  if(f==='n'){ renderB(); renderPick(); }
+}
+function setScope(s){
+  S.scope=s;
+  if(s==='one' && S.pick===null && S.lines.length) S.pick=S.lines[0].id;
+  renderPick(); renderB(); render();
+}
+function setPick(v){ S.pick=parseInt(v,10); renderB(); render(); }
+function addLine(){
+  var L={id:++uid,n:'',p:'',v:''};
+  S.lines.push(L); S.open[L.id]=(S.lines.length===1);
+  if(S.pick===null) S.pick=L.id;
+  renderLines(); renderPick(); renderB(); render();
+}
+function delLine(i){
+  var id=S.lines[i].id;
+  for(var k in S.sc) if(k.indexOf('L'+id+'_')===0) delete S.sc[k];
+  S.lines.splice(i,1);
+  if(S.pick===id) S.pick = S.lines.length? S.lines[0].id : null;
+  renderLines(); renderPick(); renderB(); render();
+}
+
+function exportar(){
+  var d = {v:3, resp:datos(), S:S, uid:uid};
+  var b = new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'madurez-'+(((d.resp&&d.resp.company)||'diagnostico').toLowerCase().replace(/[^a-z0-9]+/g,'-'))+'.json';
+  a.click();
+}
+function importar(e){
+  var f = e.target.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev){
+    try{
+      var d = JSON.parse(ev.target.result);
+      S = d.S; uid = d.uid||0;
+      if(!S.open) S.open={}; if(!S.scope) S.scope='all'; if(S.pick===undefined) S.pick=null;
+      var R = d.resp || {};
+      ['company','name','role','email','date','industry'].forEach(function(k){
+        var el = $('f-'+k); if(el) el.value = R[k] || '';
+      });
+      renderLines(); renderPick(); renderA(); renderB(); renderAl(); render();
+    }catch(_){ alert('No se pudo leer el archivo.'); }
+  };
+  r.readAsText(f); e.target.value='';
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// FORM_SLUG debe coincidir EXACTAMENTE con el slug del admin
+var FORM_SLUG = 'madurez-marketing';
+// ─────────────────────────────────────────────────────────────
+
+var enviado = false;
+
+function datos(){
+  var g = function(k){ var e = $('f-'+k); return e ? e.value.trim() : ''; };
+  return {company:g('company'), name:g('name'), role:g('role'),
+          email:g('email'), date:g('date'), industry:g('industry')};
+}
+function valido(){
+  var d = datos();
+  return !!(d.company && d.name && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email));
+}
+function chk(){
+  var b = $('send-btn'), st = $('send-st');
+  if(!b || enviado) return;
+  var ok = valido(), n = doneItems(), t = totalItems();
+  b.disabled = !ok;
+  st.textContent = !ok
+    ? 'Complete empresa, nombre y correo para poder enviar.'
+    : (n < t ? 'Puede enviar con ' + n + ' de ' + t + ' respondidos, o completar los que faltan.'
+             : 'Todos los reactivos están respondidos.');
+}
+
+// Los puntajes se calculan y se guardan, pero no se muestran a quien responde
+function resumen(){
+  var C = compute(), out = {global:null, score:null, nivel:null, veto:false, dimensiones:{}, lineas:[]};
+  if(C){
+    out.global = C.avg === null ? null : Math.round(C.avg*100)/100;
+    out.score = C.score; out.nivel = C.nivel; out.veto = C.vetoed;
+    for(var i=0;i<C.res.length;i++){
+      var R = C.res[i];
+      out.dimensiones[R.d.id] = {label:R.d.label, peso:R.d.w,
+        valor: R.v === null ? null : Math.round(R.v*100)/100};
+    }
+  }
+  var act = activeLines();
+  for(var k=0;k<act.length;k++){
+    var L = act[k], r = lineScore(L.id);
+    out.lineas.push({nombre:L.n, ingreso:L.p, vende:L.v,
+      pmf: r.pmf===null?null:Math.round(r.pmf*100)/100,
+      escalabilidad: r.esc===null?null:Math.round(r.esc*100)/100,
+      etapa: r.etapa});
+  }
+  return out;
+}
+
+function paquete(){
+  var marc = [], k;
+  for(k in S.al) if(S.al[k]) marc.push(VERIF[k]);
+  var n = doneItems(), t = totalItems();
+  return {
+    identificacion: datos(),
+    alcance: S.scope === 'one' ? 'una linea' : 'portafolio completo',
+    lineas: S.lines,
+    puntajes: S.sc,
+    sustento: S.ev,
+    verificaciones: marc,
+    resultado: resumen(),
+    avance: {respondidos:n, total:t, porcentaje: t ? Math.round((n/t)*100) : 0},
+    instrumento: 'madurez-marketing-digital-v1'
+  };
+}
+
+function enviar(){
+  if(enviado || !valido()) return;
+  var b = $('send-btn'), st = $('send-st');
+  b.disabled = true; b.textContent = 'Enviando…';
+  fetch('/.netlify/functions/save-custom-response', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ slug: FORM_SLUG, data: paquete() })
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if(res && res.success){
+      enviado = true; b.style.display = 'none';
+      st.innerHTML = '<div class="ok"><b>Respuestas recibidas.</b> Gracias por completar el diagnóstico. Revisaremos los resultados y los comentaremos en la sesión.</div>';
+    } else { falla(b, st); }
+  }).catch(function(){ falla(b, st); });
+}
+function falla(b, st){
+  b.disabled = false; b.textContent = 'Reintentar envío';
+  st.innerHTML = '<div class="er"><b>No se pudieron enviar.</b> Intente de nuevo. Si vuelve a fallar, use <b>Guardar copia</b> para no perder el trabajo.</div>';
+}
+
+addLine();
+renderA(); renderAl(); render(); chk();
+</script>
+</body>
+</html>
