@@ -6,12 +6,12 @@
 <title>Cuestionarios · AI Survey Platform · Grupo Scanda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #050d1a; --surface: #0a1628; --surface2: #0e203d; --surface3: #111e35;
     --accent: #0edda9; --accent2: #5fa8ff; --warn: #ffb340; --danger: #ff5a6e;
     --text: #f0f4f8; --muted: #7a8fa8; --border: rgba(14,221,169,0.15);
-    --radius: 10px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -42,7 +42,7 @@
   .nav-logout { font-size: 12.5px; color: var(--muted); cursor: pointer; }
 
   .main-content { margin-left: 220px; flex: 1; padding: 32px 40px; }
-  .topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; }
+  .topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
   .topbar-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
   .topbar-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
@@ -57,11 +57,11 @@
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
   .card-title { font-family: 'Syne', sans-serif; font-size: 16.5px; font-weight: 700; }
-  .badge { font-size: 10.5px; padding: 3px 10px; border-radius: 999px; font-weight: 700; letter-spacing: .03em; }
+  .badge { font-size: 10.5px; padding: 3px 10px; border-radius: 999px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; }
   .badge.on { background: rgba(14,221,169,.15); color: var(--accent); }
   .badge.off { background: rgba(122,143,168,.15); color: var(--muted); }
   .card-meta { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 16px; }
-  .card-actions { display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .card-actions { display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
   .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
 
   .editor-tabs { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
@@ -78,15 +78,37 @@
   .field input:focus, .field textarea:focus { border-color: var(--accent); }
   .field textarea.code { font-family: 'DM Mono', monospace; font-size: 12px; min-height: 260px; resize: vertical; white-space: pre; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .hint-sm { font-size: 11.5px; color: var(--muted); margin-top: 6px; text-transform: none; letter-spacing: 0; }
+
+  .logo-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .logo-preview { width: 120px; height: 62px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); overflow: hidden; }
+
   .drop { border: 1.5px dashed var(--border); border-radius: 10px; padding: 22px; text-align: center; color: var(--muted); font-size: 13px; cursor: pointer; margin-bottom: 14px; }
   .drop:hover { border-color: var(--accent); color: var(--text); }
+  .drop.loaded { border-color: var(--accent); color: var(--accent); }
   .link-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 13.5px; color: var(--accent); word-break: break-all; margin-bottom: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  td.wrap { max-width: 320px; word-break: break-word; white-space: pre-wrap; }
+  .table-scroll { overflow-x: auto; }
 
   .resp-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 12px; }
   .resp-meta { display: flex; gap: 12px; color: var(--muted); margin-bottom: 6px; font-size: 11.5px; }
-  .resp-item pre { white-space: pre-wrap; word-break: break-all; font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text); max-height: 160px; overflow: auto; }
+  .resp-item pre { white-space: pre-wrap; word-break: break-all; font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text); max-height: 200px; overflow: auto; }
 
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 13px; z-index: 2000; display: none; }
+
+  @media print {
+    .nav-sidebar, .topbar-actions, .btn, .toast { display: none !important; }
+    .main-content { margin-left: 0; padding: 0; }
+    body { background: #fff; color: #000; }
+    .panel, .card, .resp-item { background: #fff; border-color: #ccc; color: #000; }
+    .panel-label, .topbar-title { color: #000; }
+    th, td { border-color: #ccc; color: #000; }
+    .resp-item pre { color: #000; }
+  }
 </style>
 </head>
 <body>
@@ -96,7 +118,7 @@
     <h1>Cuestionarios libres</h1>
     <p>Grupo Scanda · AI Survey Platform</p>
     <input type="password" id="loginPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
+    <button class="login-btn" onclick="doLogin()">Ingresar &rarr;</button>
     <div class="login-error" id="loginError">Contraseña incorrecta</div>
   </div>
 </div>
@@ -109,10 +131,11 @@
         <div><div class="mark-text">GRUPO SCANDA</div><div class="mark-sub">AI SURVEYS</div></div>
       </div>
     </div>
-    <div class="nav-label">Gestión</div>
-    <div class="nav-item" onclick="location.href='/admin/'"><span>📋</span>&nbsp;Eventos</div>
-    <div class="nav-item active"><span>📄</span>&nbsp;Cuestionarios libres</div>
-    <div class="nav-bottom"><div class="nav-logout" onclick="logout()">🚪 Cerrar sesión</div></div>
+    <div class="nav-label">Gesti&oacute;n</div>
+    <div class="nav-item" onclick="location.href='/admin/'"><span>&#128203;</span>&nbsp;Eventos</div>
+    <div class="nav-label">Cuestionarios</div>
+    <div class="nav-item active"><span>&#128196;</span>&nbsp;Cuestionarios libres</div>
+    <div class="nav-bottom"><div class="nav-logout" onclick="logout()">&#128682; Cerrar sesi&oacute;n</div></div>
   </aside>
 
   <div class="main-content">
@@ -121,7 +144,7 @@
         <div class="topbar-title" id="topbarTitle">Cuestionarios libres</div>
         <div class="topbar-sub" id="topbarSub">HTML personalizado, con respuestas guardadas en tu GitHub</div>
       </div>
-      <div style="display:flex;gap:8px" id="topbarActions">
+      <div class="topbar-actions" style="display:flex;gap:8px" id="topbarActions">
         <button class="btn btn-primary" onclick="showEditor()">+ Nuevo Cuestionario</button>
       </div>
     </div>
@@ -130,54 +153,94 @@
 
     <div id="editorPage" style="display:none">
       <div class="editor-tabs">
-        <div class="editor-tab active" data-tab="info" onclick="switchTab('info')">① INFO</div>
-        <div class="editor-tab" data-tab="html" onclick="switchTab('html')">② HTML</div>
-        <div class="editor-tab" data-tab="link" onclick="switchTab('link')">③ LINK</div>
+        <div class="editor-tab active" data-tab="info" onclick="switchTab('info')">&#9312; INFO</div>
+        <div class="editor-tab" data-tab="html" onclick="switchTab('html')">&#9313; HTML</div>
+        <div class="editor-tab" data-tab="link" onclick="switchTab('link')">&#9314; LINK</div>
       </div>
 
       <div class="panel tab-info">
-        <div class="panel-label">Información del cuestionario</div>
+        <div class="panel-label">Informaci&oacute;n del cuestionario</div>
         <div class="row2">
-          <div class="field"><label>Nombre del cuestionario *</label><input type="text" id="fName" placeholder="Ej. Assessment OTB · Grupo Piagui"></div>
+          <div class="field"><label>Nombre del cuestionario *</label><input type="text" id="fName" placeholder="Assessment OTB &middot; Grupo Piagui"></div>
           <div class="field"><label>Slug URL *</label><input type="text" id="fSlug" placeholder="piagui-otb"></div>
         </div>
-        <div class="row2">
-          <div class="field"><label>Cliente / Organización</label><input type="text" id="fOrg" placeholder="Grupo Piagui"></div>
-          <div class="field"><label>Estado</label>
-            <select id="fActive"><option value="true">✅ Activo (acepta respuestas)</option><option value="false">⛔ Inactivo</option></select>
-          </div>
+
+        <div class="field">
+          <label>Descripci&oacute;n interna</label>
+          <textarea id="fDesc" rows="3" placeholder="De qu&eacute; trata este cuestionario, para qui&eacute;n es, en qu&eacute; fase se usa..."></textarea>
         </div>
-        <div class="field"><label>Notas internas <span style="text-transform:none;color:var(--muted)">(opcional, solo para tu referencia)</span></label>
-          <textarea id="fNotes" rows="3" placeholder="Ej. Discovery de casos de uso OTB, fase 1 antes del taller presencial..."></textarea>
+
+        <div class="field">
+          <label>Logo del cliente</label>
+          <div class="logo-row">
+            <div class="logo-preview" id="logoPreview">Sin logo</div>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('fLogoFile').click()">&#128193; Subir logo</button>
+            <button class="btn btn-secondary btn-sm" onclick="clearLogo()">&times; Quitar</button>
+            <input type="file" id="fLogoFile" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+            <input type="hidden" id="fLogo">
+          </div>
+          <div class="hint-sm">PNG, JPG o SVG &middot; fondo transparente recomendado &middot; m&aacute;x 300KB. Se guarda como referencia del cliente; el HTML del cuestionario trae su propio dise&ntilde;o.</div>
+        </div>
+
+        <div class="row2">
+          <div class="field"><label>Nombre de organizaci&oacute;n</label><input type="text" id="fOrg" placeholder="Grupo Piagui"></div>
+          <div class="field"><label>Subt&iacute;tulo</label><input type="text" id="fOrgSub" placeholder="Discovery de casos de uso"></div>
+        </div>
+
+        <div class="row2">
+          <div class="field"><label>Contacto responsable</label><input type="text" id="fOwner" placeholder="H&eacute;ctor Padilla"></div>
+          <div class="field"><label>Fecha objetivo / cierre</label><input type="text" id="fDeadline" placeholder="Ej. 15 de agosto 2026"></div>
+        </div>
+
+        <div class="row2">
+          <div class="field"><label>Estado</label>
+            <select id="fActive"><option value="true">&#9989; Activo (acepta respuestas)</option><option value="false">&#9940; Inactivo</option></select>
+          </div>
+          <div class="field"><label>Industria / sector</label><input type="text" id="fIndustry" placeholder="Retail &middot; Calzado"></div>
+        </div>
+
+        <div class="field">
+          <label>Notas internas</label>
+          <textarea id="fNotes" rows="3" placeholder="Contexto, stakeholders invitados, pendientes..."></textarea>
         </div>
       </div>
 
       <div class="panel tab-html" style="display:none">
         <div class="panel-label">HTML del cuestionario</div>
-        <div class="drop" onclick="document.getElementById('fileInput').click()">📄 Arrastra o haz clic para cargar un archivo .html</div>
+        <div class="drop" id="dropZone" onclick="document.getElementById('fileInput').click()">&#128196; Arrastra o haz clic para cargar un archivo .html</div>
         <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="loadHtmlFile(event)">
-        <div class="field"><label>O pega el código directamente</label>
+        <div class="field"><label>O pega el c&oacute;digo directamente</label>
           <textarea id="fHtml" class="code" placeholder="&lt;!DOCTYPE html&gt;..."></textarea>
+          <div class="hint-sm">Para que las respuestas se guarden, el HTML debe llamar a <span class="mono">/.netlify/functions/save-custom-response</span> con el mismo slug de arriba.</div>
         </div>
       </div>
 
       <div class="panel tab-link" style="display:none">
-        <div class="panel-label">Link público</div>
+        <div class="panel-label">Link p&uacute;blico</div>
         <div class="link-box" id="linkBox">Guarda el cuestionario para generar su link</div>
-        <div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" id="openLinkBtn" onclick="openPublicLink()" disabled>🔗 Abrir y probar</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" id="openLinkBtn" onclick="openPublicLink()" disabled>&#128279; Abrir y probar</button>
+          <button class="btn btn-secondary btn-sm" id="copyLinkBtn" onclick="copyPublicLink()" disabled>&#128203; Copiar link</button>
+        </div>
       </div>
 
       <div style="display:flex;justify-content:space-between;margin-top:10px">
-        <button class="btn btn-secondary" onclick="showList()">← Cancelar</button>
-        <button class="btn btn-primary" onclick="saveForm()">💾 Guardar cuestionario</button>
+        <button class="btn btn-secondary" onclick="showList()">&larr; Cancelar</button>
+        <button class="btn btn-primary" id="saveFormBtn" onclick="saveForm()">&#128190; Guardar cuestionario</button>
       </div>
     </div>
 
     <div id="responsesPage" style="display:none">
-      <button class="btn btn-secondary btn-sm" onclick="showList()" style="margin-bottom:16px">← Volver</button>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="showList()">&larr; Volver</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportExcel()">&#128202; Descargar Excel</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportPdf()">&#128424; Descargar PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleRaw()" id="rawBtn">&#128269; Ver JSON crudo</button>
+      </div>
       <div class="panel">
         <div class="panel-label" id="responsesTitle">Respuestas</div>
-        <div id="responsesList"></div>
+        <div id="responsesTable"></div>
+        <div id="responsesList" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -190,6 +253,18 @@ const BASE_URL = location.origin;
 let adminPass = '';
 let allForms = [];
 let editingFormId = null;
+let currentResponses = [];
+let currentForm = null;
+let showingRaw = false;
+
+/* ===== LOGIN (sesión compartida con /admin/) ===== */
+function bootstrapSession() {
+  try {
+    const saved = sessionStorage.getItem('scanda_admin_pass');
+    if (saved) { adminPass = saved; enterApp(); return true; }
+  } catch (_) {}
+  return false;
+}
 
 async function doLogin() {
   const pass = document.getElementById('loginPass').value;
@@ -197,68 +272,85 @@ async function doLogin() {
   const btn = document.querySelector('.login-btn');
   btn.textContent = 'Verificando...'; btn.disabled = true;
   try {
-    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-forms?adminPassword=${encodeURIComponent(pass)}`);
+    const res = await fetch(BASE_URL + '/.netlify/functions/list-custom-forms?adminPassword=' + encodeURIComponent(pass));
     if (res.ok) { adminPass = pass; enterApp(); }
     else if (res.status === 401) {
-      document.getElementById('loginError').textContent = 'Contraseña incorrecta';
+      document.getElementById('loginError').textContent = 'Contrase\u00f1a incorrecta';
       document.getElementById('loginError').style.display = 'block';
-    } else { adminPass = pass; enterApp('⚠️ Functions con error — modo limitado'); }
-  } catch (_) { adminPass = pass; enterApp('⚠️ Functions no disponibles'); }
-  finally { btn.textContent = 'Ingresar →'; btn.disabled = false; }
+    } else { adminPass = pass; enterApp('\u26a0\ufe0f Functions con error \u2014 modo limitado'); }
+  } catch (_) { adminPass = pass; enterApp('\u26a0\ufe0f Functions no disponibles'); }
+  finally { btn.textContent = 'Ingresar \u2192'; btn.disabled = false; }
 }
+
 function enterApp(warning) {
+  try { sessionStorage.setItem('scanda_admin_pass', adminPass); } catch (_) {}
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('active');
   if (warning) showToast(warning);
   loadForms();
 }
+
 function logout() {
-  adminPass = ''; document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('app').classList.remove('active'); document.getElementById('loginPass').value = '';
+  adminPass = '';
+  try { sessionStorage.removeItem('scanda_admin_pass'); } catch (_) {}
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginPass').value = '';
 }
+
 function showToast(msg) {
   const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 3500);
+  setTimeout(function(){ t.style.display = 'none'; }, 3500);
 }
 
 /* ===== LIST ===== */
 async function loadForms() {
-  document.getElementById('formsGrid').innerHTML = `<div class="empty-state">Cargando…</div>`;
+  document.getElementById('formsGrid').innerHTML = '<div class="empty-state">Cargando\u2026</div>';
   try {
-    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-forms?adminPassword=${encodeURIComponent(adminPass)}`);
+    const res = await fetch(BASE_URL + '/.netlify/functions/list-custom-forms?adminPassword=' + encodeURIComponent(adminPass));
     const data = await res.json();
     allForms = data.forms || [];
   } catch (_) { allForms = []; }
-  await renderFormsGrid();
+  renderFormsGrid();
 }
 
-async function renderFormsGrid() {
+function renderFormsGrid() {
   const grid = document.getElementById('formsGrid');
-  if (allForms.length === 0) { grid.innerHTML = `<div class="empty-state">Aún no hay cuestionarios. Crea el primero con "+ Nuevo Cuestionario".</div>`; return; }
+  if (allForms.length === 0) {
+    grid.innerHTML = '<div class="empty-state">A\u00fan no hay cuestionarios. Crea el primero con "+ Nuevo Cuestionario".</div>';
+    return;
+  }
 
-  grid.innerHTML = allForms.map(f => `<div class="card" id="card-${f.formId}">
-      <div class="card-top">
-        <div class="card-title">${escapeHtml(f.formName || f.slug)}</div>
-        <span class="badge ${f.active === false ? 'off' : 'on'}">${f.active === false ? 'Inactivo' : 'Activo'}</span>
-      </div>
-      <div class="card-meta">
-        <span class="mono">🔗 /c/${f.slug}</span>
-        <span>📅 ${f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '—'}</span>
-        <span id="count-${f.formId}">👥 …</span>
-      </div>
-      <div class="card-actions">
-        <button class="btn btn-secondary btn-sm" onclick="editForm('${f.formId}')">✏️ Editar</button>
-        <button class="btn btn-secondary btn-sm" onclick="viewResponses('${f.formId}')">📊 Respuestas</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteForm('${f.formId}')">🗑</button>
-      </div>
-    </div>`).join('');
+  grid.innerHTML = allForms.map(function(f) {
+    const logo = f.clientLogo ? '<img src="' + f.clientLogo + '" style="height:22px;max-width:80px;object-fit:contain">' : '';
+    return '<div class="card" id="card-' + f.formId + '">' +
+      '<div class="card-top">' +
+        '<div><div class="card-title">' + escapeHtml(f.formName || f.slug) + '</div>' +
+        (f.orgName ? '<div style="font-size:12px;color:var(--muted);margin-top:3px">' + escapeHtml(f.orgName) + '</div>' : '') +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">' +
+          '<span class="badge ' + (f.active === false ? 'off' : 'on') + '">' + (f.active === false ? 'Inactivo' : 'Activo') + '</span>' + logo +
+        '</div>' +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="mono">\u{1F517} /c/' + f.slug + '</span>' +
+        '<span>\u{1F4C5} ' + (f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '\u2014') + '</span>' +
+        '<span id="count-' + f.formId + '">\u{1F465} \u2026</span>' +
+      '</div>' +
+      '<div class="card-actions">' +
+        '<button class="btn btn-secondary btn-sm" onclick="editForm(\'' + f.formId + '\')">\u270F\uFE0F Editar</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="viewResponses(\'' + f.formId + '\')">\u{1F4CA} Respuestas</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteForm(\'' + f.formId + '\')">\u{1F5D1}</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 
-  allForms.forEach(async f => {
+  allForms.forEach(async function(f) {
     try {
-      const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-responses?slug=${f.slug}&adminPassword=${encodeURIComponent(adminPass)}`);
+      const res = await fetch(BASE_URL + '/.netlify/functions/list-custom-responses?slug=' + f.slug + '&adminPassword=' + encodeURIComponent(adminPass));
       const data = await res.json();
-      const el = document.getElementById(`count-${f.formId}`);
-      if (el) el.textContent = `👥 ${(data.responses || []).length} respuestas`;
+      const el = document.getElementById('count-' + f.formId);
+      if (el) el.textContent = '\u{1F465} ' + (data.responses || []).length + ' respuestas';
     } catch (_) {}
   });
 }
@@ -280,21 +372,31 @@ function showEditor(form) {
   document.getElementById('responsesPage').style.display = 'none';
   document.getElementById('editorPage').style.display = 'block';
   document.getElementById('topbarTitle').textContent = form ? 'Editar cuestionario' : 'Nuevo cuestionario';
-  document.getElementById('topbarSub').textContent = 'Info, HTML y link público';
+  document.getElementById('topbarSub').textContent = 'Info, HTML y link p\u00fablico';
   document.getElementById('topbarActions').style.display = 'none';
   switchTab('info');
 
-  document.getElementById('fName').value = form?.formName || '';
-  document.getElementById('fSlug').value = form?.slug || '';
-  document.getElementById('fOrg').value = form?.orgName || '';
-  document.getElementById('fActive').value = form?.active === false ? 'false' : 'true';
-  document.getElementById('fNotes').value = form?.notes || '';
+  document.getElementById('fName').value = (form && form.formName) || '';
+  document.getElementById('fSlug').value = (form && form.slug) || '';
+  document.getElementById('fDesc').value = (form && form.heroDesc) || '';
+  document.getElementById('fOrg').value = (form && form.orgName) || '';
+  document.getElementById('fOrgSub').value = (form && form.orgSub) || '';
+  document.getElementById('fOwner').value = (form && form.owner) || '';
+  document.getElementById('fDeadline').value = (form && form.deadline) || '';
+  document.getElementById('fIndustry').value = (form && form.industry) || '';
+  document.getElementById('fActive').value = (form && form.active === false) ? 'false' : 'true';
+  document.getElementById('fNotes').value = (form && form.notes) || '';
+  document.getElementById('fLogo').value = (form && form.clientLogo) || '';
+  setLogoPreview((form && form.clientLogo) || '');
   document.getElementById('fHtml').value = '';
-  updateLinkBox(form?.slug);
+  document.getElementById('dropZone').classList.remove('loaded');
+  document.getElementById('dropZone').innerHTML = '\u{1F4C4} Arrastra o haz clic para cargar un archivo .html';
+  updateLinkBox(form && form.slug);
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.editor-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  const tabs = document.querySelectorAll('.editor-tab');
+  for (let i = 0; i < tabs.length; i++) tabs[i].classList.toggle('active', tabs[i].dataset.tab === tab);
   document.querySelector('.tab-info').style.display = tab === 'info' ? 'block' : 'none';
   document.querySelector('.tab-html').style.display = tab === 'html' ? 'block' : 'none';
   document.querySelector('.tab-link').style.display = tab === 'link' ? 'block' : 'none';
@@ -304,109 +406,282 @@ function loadHtmlFile(evt) {
   const file = evt.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => { document.getElementById('fHtml').value = e.target.result; showToast('✅ Archivo cargado — revisa y guarda'); };
+  reader.onload = function(e) {
+    document.getElementById('fHtml').value = e.target.result;
+    const dz = document.getElementById('dropZone');
+    dz.classList.add('loaded');
+    dz.innerHTML = '\u2705 ' + file.name + ' cargado (' + Math.round(file.size / 1024) + ' KB)';
+    showToast('\u2705 Archivo cargado \u2014 revisa y guarda');
+  };
   reader.readAsText(file);
 }
 
+/* ===== LOGO ===== */
+function handleLogoUpload(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  if (file.size > 300000) { showToast('\u274C Logo demasiado grande \u2014 m\u00e1ximo 300KB'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('fLogo').value = e.target.result;
+    setLogoPreview(e.target.result);
+    showToast('\u2705 Logo cargado');
+  };
+  reader.readAsDataURL(file);
+}
+function clearLogo() {
+  document.getElementById('fLogo').value = '';
+  setLogoPreview('');
+  document.getElementById('fLogoFile').value = '';
+}
+function setLogoPreview(base64) {
+  const p = document.getElementById('logoPreview');
+  p.innerHTML = base64 ? '<img src="' + base64 + '" style="max-width:100%;max-height:100%;object-fit:contain">' : 'Sin logo';
+}
+
+/* ===== LINK ===== */
 function updateLinkBox(slug) {
   const box = document.getElementById('linkBox');
   const btn = document.getElementById('openLinkBtn');
-  if (slug) { box.textContent = `${BASE_URL}/c/${slug}`; btn.disabled = false; }
-  else { box.textContent = 'Guarda el cuestionario para generar su link'; btn.disabled = true; }
+  const cbtn = document.getElementById('copyLinkBtn');
+  if (slug) { box.textContent = BASE_URL + '/c/' + slug; btn.disabled = false; cbtn.disabled = false; }
+  else { box.textContent = 'Guarda el cuestionario para generar su link'; btn.disabled = true; cbtn.disabled = true; }
 }
-
 function openPublicLink() {
   const slug = document.getElementById('fSlug').value.trim();
-  if (slug) window.open(`${BASE_URL}/c/${slug}`, '_blank');
+  if (slug) window.open(BASE_URL + '/c/' + slug, '_blank');
+}
+function copyPublicLink() {
+  const slug = document.getElementById('fSlug').value.trim();
+  if (!slug) return;
+  navigator.clipboard.writeText(BASE_URL + '/c/' + slug)
+    .then(function(){ showToast('\u{1F4CB} Link copiado'); })
+    .catch(function(){ showToast('\u274C No se pudo copiar'); });
 }
 
+/* ===== SAVE ===== */
 async function saveForm() {
+  const btn = document.getElementById('saveFormBtn');
+  if (btn.disabled) return;
   const formName = document.getElementById('fName').value.trim();
   const slug = document.getElementById('fSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
-  const orgName = document.getElementById('fOrg').value.trim();
-  const active = document.getElementById('fActive').value === 'true';
-  const notes = document.getElementById('fNotes').value.trim();
   const html = document.getElementById('fHtml').value;
 
-  if (!formName || !slug) { showToast('⚠️ Nombre y slug son obligatorios'); switchTab('info'); return; }
-  const existing = allForms.find(f => f.slug === slug && f.formId !== editingFormId);
-  if (existing) { showToast('⚠️ Ese slug ya está en uso por otro cuestionario'); switchTab('info'); return; }
-  if (!editingFormId && !html.trim()) { showToast('⚠️ Falta el HTML del cuestionario'); switchTab('html'); return; }
+  if (!formName || !slug) { showToast('\u26a0\ufe0f Nombre y slug son obligatorios'); switchTab('info'); return; }
+  const dup = allForms.filter(function(f){ return f.slug === slug && f.formId !== editingFormId; });
+  if (dup.length) { showToast('\u26a0\ufe0f Ese slug ya est\u00e1 en uso por otro cuestionario'); switchTab('info'); return; }
+  if (!editingFormId && !html.trim()) { showToast('\u26a0\ufe0f Falta el HTML del cuestionario'); switchTab('html'); return; }
 
-  const formData = { formId: editingFormId, formName, slug, orgName, active, notes };
+  const formData = {
+    formId: editingFormId,
+    formName: formName,
+    slug: slug,
+    heroDesc: document.getElementById('fDesc').value.trim(),
+    orgName: document.getElementById('fOrg').value.trim(),
+    orgSub: document.getElementById('fOrgSub').value.trim(),
+    owner: document.getElementById('fOwner').value.trim(),
+    deadline: document.getElementById('fDeadline').value.trim(),
+    industry: document.getElementById('fIndustry').value.trim(),
+    active: document.getElementById('fActive').value === 'true',
+    notes: document.getElementById('fNotes').value.trim(),
+    clientLogo: document.getElementById('fLogo').value || ''
+  };
 
+  btn.disabled = true;
+  const originalLabel = btn.innerHTML;
+  btn.textContent = 'Guardando\u2026';
   try {
-    const res = await fetch(`${BASE_URL}/.netlify/functions/save-custom-form`, {
+    const res = await fetch(BASE_URL + '/.netlify/functions/save-custom-form', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminPassword: adminPass, formData, html }),
+      body: JSON.stringify({ adminPassword: adminPass, formData: formData, html: html })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error al guardar');
     editingFormId = data.formId;
     updateLinkBox(data.slug);
     switchTab('link');
-    showToast('✅ Cuestionario guardado');
+    showToast('\u2705 Cuestionario guardado');
     await loadForms();
   } catch (err) {
-    showToast('❌ ' + err.message);
+    showToast('\u274C ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalLabel;
   }
 }
 
 function editForm(formId) {
-  const form = allForms.find(f => f.formId === formId);
-  if (form) showEditor(form);
+  const f = allForms.filter(function(x){ return x.formId === formId; })[0];
+  if (f) showEditor(f);
 }
 
 async function deleteForm(formId) {
-  const form = allForms.find(f => f.formId === formId);
-  if (!form) return;
-  if (!confirm(`¿Eliminar "${form.formName}" de la lista? El HTML y las respuestas quedan en GitHub por si lo necesitas recuperar.`)) return;
+  const f = allForms.filter(function(x){ return x.formId === formId; })[0];
+  if (!f) return;
+  if (!confirm('\u00bfEliminar "' + f.formName + '" de la lista? El HTML y las respuestas quedan en GitHub por si lo necesitas recuperar.')) return;
   try {
-    const res = await fetch(`${BASE_URL}/.netlify/functions/delete-custom-form`, {
+    const res = await fetch(BASE_URL + '/.netlify/functions/delete-custom-form', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminPassword: adminPass, formId }),
+      body: JSON.stringify({ adminPassword: adminPass, formId: formId })
     });
     if (!res.ok) throw new Error('No se pudo eliminar');
-    showToast('🗑 Eliminado');
+    showToast('\u{1F5D1} Eliminado');
     loadForms();
-  } catch (err) { showToast('❌ ' + err.message); }
+  } catch (err) { showToast('\u274C ' + err.message); }
 }
 
 /* ===== RESPONSES ===== */
 async function viewResponses(formId) {
-  const form = allForms.find(f => f.formId === formId);
-  if (!form) return;
+  const f = allForms.filter(function(x){ return x.formId === formId; })[0];
+  if (!f) return;
+  currentForm = f;
+  showingRaw = false;
   document.getElementById('listPage').style.display = 'none';
   document.getElementById('editorPage').style.display = 'none';
   document.getElementById('responsesPage').style.display = 'block';
   document.getElementById('topbarActions').style.display = 'none';
-  document.getElementById('topbarTitle').textContent = form.formName;
-  document.getElementById('topbarSub').textContent = `/c/${form.slug}`;
-  document.getElementById('responsesTitle').textContent = 'Cargando respuestas…';
+  document.getElementById('topbarTitle').textContent = f.formName;
+  document.getElementById('topbarSub').textContent = '/c/' + f.slug;
+  document.getElementById('responsesTitle').textContent = 'Cargando respuestas\u2026';
+  document.getElementById('responsesTable').innerHTML = '';
   document.getElementById('responsesList').innerHTML = '';
 
   try {
-    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-responses?slug=${form.slug}&adminPassword=${encodeURIComponent(adminPass)}`);
+    const res = await fetch(BASE_URL + '/.netlify/functions/list-custom-responses?slug=' + f.slug + '&adminPassword=' + encodeURIComponent(adminPass));
     const data = await res.json();
-    const responses = data.responses || [];
-    document.getElementById('responsesTitle').textContent = `${responses.length} respuesta${responses.length === 1 ? '' : 's'}`;
-    if (responses.length === 0) {
-      document.getElementById('responsesList').innerHTML = `<div class="empty-state">Aún no hay respuestas registradas.</div>`;
-      return;
-    }
-    document.getElementById('responsesList').innerHTML = responses.map((r, i) => `
-      <div class="resp-item">
-        <div class="resp-meta"><span>#${i + 1}</span><span>${r.ts ? new Date(r.ts).toLocaleString() : '—'}</span></div>
-        <pre>${escapeHtml(JSON.stringify(r, null, 2))}</pre>
-      </div>`).join('');
+    currentResponses = data.responses || [];
+    renderResponses();
   } catch (err) {
-    document.getElementById('responsesList').innerHTML = `<div class="empty-state">Error cargando respuestas: ${err.message}</div>`;
+    document.getElementById('responsesTitle').textContent = 'Respuestas';
+    document.getElementById('responsesTable').innerHTML = '<div class="empty-state">Error cargando respuestas: ' + escapeHtml(err.message) + '</div>';
   }
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function flattenObject(obj, prefix, out) {
+  prefix = prefix || '';
+  out = out || {};
+  for (const k in obj) {
+    if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+    const val = obj[k];
+    const key = prefix ? prefix + '.' + k : k;
+    if (val && typeof val === 'object' && !Array.isArray(val)) flattenObject(val, key, out);
+    else if (Array.isArray(val)) out[key] = val.join(' | ');
+    else out[key] = val;
+  }
+  return out;
 }
+
+function buildRows() {
+  const flat = currentResponses.map(function(r){ return flattenObject(r); });
+  const colSet = {};
+  flat.forEach(function(row){ for (const k in row) colSet[k] = true; });
+  const cols = Object.keys(colSet);
+  // ts primero si existe
+  cols.sort(function(a, b){
+    if (a === 'ts') return -1;
+    if (b === 'ts') return 1;
+    return 0;
+  });
+  return { cols: cols, rows: flat };
+}
+
+function renderResponses() {
+  const n = currentResponses.length;
+  document.getElementById('responsesTitle').textContent = n + ' respuesta' + (n === 1 ? '' : 's');
+  if (n === 0) {
+    document.getElementById('responsesTable').innerHTML = '<div class="empty-state">A\u00fan no hay respuestas registradas.</div>';
+    return;
+  }
+
+  const built = buildRows();
+  let html = '<div class="table-scroll"><table><tr><th>#</th>';
+  built.cols.forEach(function(c){ html += '<th>' + escapeHtml(c) + '</th>'; });
+  html += '</tr>';
+  built.rows.forEach(function(row, i){
+    html += '<tr><td>' + (i + 1) + '</td>';
+    built.cols.forEach(function(c){
+      let v = row[c];
+      if (v === undefined || v === null) v = '';
+      if (c === 'ts' && v) { try { v = new Date(v).toLocaleString(); } catch (_) {} }
+      html += '<td class="wrap">' + escapeHtml(String(v)) + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</table></div>';
+  document.getElementById('responsesTable').innerHTML = html;
+
+  document.getElementById('responsesList').innerHTML = currentResponses.map(function(r, i){
+    return '<div class="resp-item"><div class="resp-meta"><span>#' + (i + 1) + '</span><span>' +
+      (r.ts ? new Date(r.ts).toLocaleString() : '\u2014') + '</span></div><pre>' +
+      escapeHtml(JSON.stringify(r, null, 2)) + '</pre></div>';
+  }).join('');
+}
+
+function toggleRaw() {
+  showingRaw = !showingRaw;
+  document.getElementById('responsesTable').style.display = showingRaw ? 'none' : 'block';
+  document.getElementById('responsesList').style.display = showingRaw ? 'block' : 'none';
+  document.getElementById('rawBtn').innerHTML = showingRaw ? '\u{1F4CA} Ver tabla' : '\u{1F50D} Ver JSON crudo';
+}
+
+/* ===== EXPORTS ===== */
+function exportExcel() {
+  if (!currentResponses.length) { showToast('\u26a0\ufe0f No hay respuestas para exportar'); return; }
+  if (typeof XLSX === 'undefined') { showToast('\u274C Librer\u00eda XLSX no disponible'); return; }
+  const built = buildRows();
+  const aoa = [built.cols];
+  built.rows.forEach(function(row){
+    aoa.push(built.cols.map(function(c){
+      let v = row[c];
+      if (v === undefined || v === null) return '';
+      if (c === 'ts' && v) { try { return new Date(v).toLocaleString(); } catch (_) { return v; } }
+      return v;
+    }));
+  });
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Respuestas');
+  const name = (currentForm && currentForm.slug ? currentForm.slug : 'cuestionario') + '-respuestas.xlsx';
+  XLSX.writeFile(wb, name);
+  showToast('\u{1F4CA} Excel descargado');
+}
+
+function exportPdf() {
+  if (!currentResponses.length) { showToast('\u26a0\ufe0f No hay respuestas para exportar'); return; }
+  window.print();
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function(c){
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+/* ===== DRAG & DROP ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  bootstrapSession();
+  const dz = document.getElementById('dropZone');
+  if (dz) {
+    ['dragenter','dragover'].forEach(function(ev){
+      dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.style.borderColor = 'var(--accent)'; });
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.style.borderColor = ''; });
+    });
+    dz.addEventListener('drop', function(e){
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev2){
+        document.getElementById('fHtml').value = ev2.target.result;
+        dz.classList.add('loaded');
+        dz.innerHTML = '\u2705 ' + file.name + ' cargado (' + Math.round(file.size / 1024) + ' KB)';
+        showToast('\u2705 Archivo cargado \u2014 revisa y guarda');
+      };
+      reader.readAsText(file);
+    });
+  }
+});
 </script>
 </body>
 </html>
