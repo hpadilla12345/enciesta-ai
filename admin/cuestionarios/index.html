@@ -193,11 +193,22 @@
         </div>
 
         <div class="row2">
+          <div class="field"><label>Texto del bot&oacute;n CTA</label><input type="text" id="fCtaText" placeholder="AGENDAR MI SESI&Oacute;N &rarr;"></div>
+          <div class="field"><label>URL del CTA</label><input type="text" id="fCtaUrl" placeholder="https://calendly.com/..."></div>
+        </div>
+        <div class="hint-sm" style="margin:-8px 0 18px">Se guardan como referencia del cuestionario. El HTML que subes controla su propio bot&oacute;n final &mdash; si quieres que use este CTA, d&iacute;melo al generarlo.</div>
+
+        <div class="row2">
           <div class="field"><label>Estado</label>
             <select id="fActive"><option value="true">&#9989; Activo (acepta respuestas)</option><option value="false">&#9940; Inactivo</option></select>
           </div>
-          <div class="field"><label>Industria / sector</label><input type="text" id="fIndustry" placeholder="Retail &middot; Calzado"></div>
+          <div class="field"><label>CC admin al recibir respuesta</label>
+            <select id="fCcAdmin"><option value="true">&#9989; S&iacute;, avisarme</option><option value="false">&#9940; No</option></select>
+          </div>
         </div>
+        <div class="hint-sm" style="margin:-8px 0 18px">&#9888;&#65039; El aviso por correo a&uacute;n no est&aacute; conectado para cuestionarios libres &mdash; por ahora este campo solo queda registrado.</div>
+
+        <div class="field"><label>Industria / sector</label><input type="text" id="fIndustry" placeholder="Retail &middot; Calzado"></div>
 
         <div class="field">
           <label>Notas internas</label>
@@ -338,9 +349,11 @@ function renderFormsGrid() {
         '<span id="count-' + f.formId + '">\u{1F465} \u2026</span>' +
       '</div>' +
       '<div class="card-actions">' +
-        '<button class="btn btn-secondary btn-sm" onclick="editForm(\'' + f.formId + '\')">\u270F\uFE0F Editar</button>' +
-        '<button class="btn btn-secondary btn-sm" onclick="viewResponses(\'' + f.formId + '\')">\u{1F4CA} Respuestas</button>' +
-        '<button class="btn btn-danger btn-sm" onclick="deleteForm(\'' + f.formId + '\')">\u{1F5D1}</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="editForm(\'' + f.formId + '\')" title="Editar">\u270F\uFE0F Editar</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="viewResponses(\'' + f.formId + '\')" title="Ver respuestas">\u{1F4CA} Respuestas</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="cloneForm(\'' + f.formId + '\')" title="Clonar">\u29C9</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="clearResponses(\'' + f.formId + '\')" title="Limpiar respuestas">\u{1F9F9}</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteForm(\'' + f.formId + '\')" title="Eliminar">\u{1F5D1}</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -384,6 +397,9 @@ function showEditor(form) {
   document.getElementById('fOwner').value = (form && form.owner) || '';
   document.getElementById('fDeadline').value = (form && form.deadline) || '';
   document.getElementById('fIndustry').value = (form && form.industry) || '';
+  document.getElementById('fCtaText').value = (form && form.ctaText) || '';
+  document.getElementById('fCtaUrl').value = (form && form.ctaUrl) || '';
+  document.getElementById('fCcAdmin').value = (form && form.ccAdmin === false) ? 'false' : 'true';
   document.getElementById('fActive').value = (form && form.active === false) ? 'false' : 'true';
   document.getElementById('fNotes').value = (form && form.notes) || '';
   document.getElementById('fLogo').value = (form && form.clientLogo) || '';
@@ -482,6 +498,9 @@ async function saveForm() {
     owner: document.getElementById('fOwner').value.trim(),
     deadline: document.getElementById('fDeadline').value.trim(),
     industry: document.getElementById('fIndustry').value.trim(),
+    ctaText: document.getElementById('fCtaText').value.trim(),
+    ctaUrl: document.getElementById('fCtaUrl').value.trim(),
+    ccAdmin: document.getElementById('fCcAdmin').value === 'true',
     active: document.getElementById('fActive').value === 'true',
     notes: document.getElementById('fNotes').value.trim(),
     clientLogo: document.getElementById('fLogo').value || ''
@@ -513,6 +532,79 @@ async function saveForm() {
 function editForm(formId) {
   const f = allForms.filter(function(x){ return x.formId === formId; })[0];
   if (f) showEditor(f);
+}
+
+async function cloneForm(formId) {
+  const f = allForms.filter(function(x){ return x.formId === formId; })[0];
+  if (!f) return;
+
+  let base = f.slug + '-copia';
+  let candidate = base;
+  let n = 2;
+  while (allForms.filter(function(x){ return x.slug === candidate; }).length) {
+    candidate = base + '-' + n; n++;
+  }
+
+  const newSlug = prompt('Slug para la copia:', candidate);
+  if (!newSlug) return;
+  const clean = newSlug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  if (allForms.filter(function(x){ return x.slug === clean; }).length) {
+    showToast('\u26a0\ufe0f Ese slug ya est\u00e1 en uso'); return;
+  }
+
+  showToast('\u23F3 Clonando\u2026');
+  try {
+    const srcRes = await fetch(BASE_URL + '/.netlify/functions/get-custom-form-source?slug=' + f.slug + '&adminPassword=' + encodeURIComponent(adminPass));
+    const srcData = await srcRes.json();
+    if (!srcRes.ok) throw new Error(srcData.error || 'No se pudo leer el HTML original');
+
+    let html = srcData.html || '';
+    // Reapunta el FORM_SLUG del HTML al nuevo slug para que las respuestas no se mezclen
+    const before = html;
+    html = html.replace(/(FORM_SLUG\s*=\s*['"])([^'"]*)(['"])/, '$1' + clean + '$3');
+    const slugRewritten = html !== before;
+
+    const copy = {
+      formId: null,
+      formName: f.formName + ' (copia)',
+      slug: clean,
+      heroDesc: f.heroDesc || '', orgName: f.orgName || '', orgSub: f.orgSub || '',
+      owner: f.owner || '', deadline: f.deadline || '', industry: f.industry || '',
+      ctaText: f.ctaText || '', ctaUrl: f.ctaUrl || '',
+      ccAdmin: f.ccAdmin !== false, active: f.active !== false,
+      notes: f.notes || '', clientLogo: f.clientLogo || ''
+    };
+
+    const res = await fetch(BASE_URL + '/.netlify/functions/save-custom-form', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminPassword: adminPass, formData: copy, html: html })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al clonar');
+
+    showToast(slugRewritten
+      ? '\u2705 Clonado \u2014 FORM_SLUG actualizado a "' + clean + '"'
+      : '\u2705 Clonado \u2014 \u26a0\ufe0f revisa el FORM_SLUG dentro del HTML');
+    await loadForms();
+  } catch (err) {
+    showToast('\u274C ' + err.message);
+  }
+}
+
+async function clearResponses(formId) {
+  const f = allForms.filter(function(x){ return x.formId === formId; })[0];
+  if (!f) return;
+  if (!confirm('\u00bfBorrar TODAS las respuestas de "' + f.formName + '"?\n\nEsto no se puede deshacer desde el admin. El cuestionario y su HTML se conservan.')) return;
+  try {
+    const res = await fetch(BASE_URL + '/.netlify/functions/clear-custom-responses', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminPassword: adminPass, slug: f.slug })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'No se pudo limpiar');
+    showToast('\u{1F9F9} Respuestas borradas');
+    loadForms();
+  } catch (err) { showToast('\u274C ' + err.message); }
 }
 
 async function deleteForm(formId) {
