@@ -33,3 +33,8 @@
   from = "/summary"
   to = "/summary/"
   status = 301
+
+[[redirects]]
+  from = "/c/*"
+  to = "/.netlify/functions/get-custom-form?slug=:splat"
+  status = 200
