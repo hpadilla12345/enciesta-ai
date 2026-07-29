@@ -1,7 +1,9 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const gh = require('./gh-storage');
 
-const DIMS = [
+// Defaults para el modelo de Madurez en IA — se sobreescriben si el evento
+// define sus propias dimensiones, niveles o ruta de recomendacion
+const DEFAULT_DIMS = [
   { id:'qB1', label:'Estrategia de IA' },
   { id:'qB2', label:'Valor e Iniciativas' },
   { id:'qB3', label:'Organización' },
@@ -10,7 +12,24 @@ const DIMS = [
   { id:'qB6', label:'Ingeniería y Sistemas' },
   { id:'qB7', label:'Datos' },
 ];
-const NIVELES = ['','Inicial','Experimentación','Estabilización','Escalamiento','Liderazgo'];
+const DEFAULT_NIVELES = ['','Inicial','Experimentación','Estabilización','Escalamiento','Liderazgo'];
+const DEFAULT_ROUTE = [
+  { maxAvg:2.5, steps:[
+    ['Fase 01 · Discovery','Workshop Ejecutivo de Discovery (2-3h)','Mapeo de dolores, matriz impacto/complejidad, roadmap Q1-Q4. Entregable: heat map de madurez + business case.'],
+    ['Fase 01 + Componentes 05 & 06','Champions + Gobernanza + Data Foundation','Formación de AI Champions, políticas de IA y Data Pipeline. Cierra las brechas antes de construir.'],
+    ['Fases 02-03 · Diseño & Construcción','Blueprint + Primer proyecto Track A','Con PoV aprobado, construye la primera iniciativa en Stage-Gate CMMI L3 con valor medido.']
+  ]},
+  { maxAvg:3.5, steps:[
+    ['Fase 01 · Discovery','Workshop Ejecutivo + Proof of Value','Prioriza los 2-3 casos de uso con mayor ROI y valida factibilidad técnica.'],
+    ['Fase 02 · Diseño','Blueprint de arquitectura hub-and-spoke','Define los patrones técnicos y el modelo operativo para escalar.'],
+    ['Fase 03 · Construcción','Fábrica de IA - Stage-Gate CMMI L3','Construye y despliega iniciativas con pruebas T1-T6 y loops de mejora continua.']
+  ]},
+  { maxAvg:5.0, steps:[
+    ['Fase 03 · Construcción avanzada','Escalar iniciativas existentes con MLOps','Tu madurez permite ir directo a construcción. Define el portafolio y escala con gobernanza.'],
+    ['Fase 04 · Operación','MLOps + Loop anual de madurez','Implementa monitoreo de modelos, detección de drift y ciclo de mejora continua del CoE.'],
+    ['Siguiente nivel · IA Nativa','Track B: reimaginar procesos clave con IA','Con Track A estable, diseña procesos Track B que diferencien tu organización en el mercado.']
+  ]}
+];
 const DIM_COLORS = { 1:'#ef4444', 2:'#f59e0b', 3:'#0d9488', 4:'#059669', 5:'#0597ff' };
 
 function formatAnswer(ans, qType) {
@@ -159,17 +178,9 @@ Genera texto para estas 5 secciones separadas por ===:
     }).join('');
 
     // Ruta CoE steps based on level
-    const rutaSteps = avg < 2.5
-      ? [['Fase 01 · Discovery','Workshop Ejecutivo de Discovery (2-3h)','Mapeo de dolores, matriz impacto/complejidad, roadmap Q1-Q4. Entregable: heat map de madurez + business case.'],
-         ['Fase 01 + Componentes 05 & 06','Champions + Gobernanza + Data Foundation','Formación de AI Champions, políticas de IA (ISO 42001) y Data Pipeline. Cierra las brechas antes de construir.'],
-         ['Fases 02-03 · Diseño & Construcción','Blueprint + Primer proyecto Track A','Con PoV aprobado, construye la primera iniciativa en Stage-Gate CMMI L3 con valor medido.']]
-      : avg < 3.5
-      ? [['Fase 01 · Discovery','Workshop Ejecutivo + Proof of Value','Prioriza los 2-3 casos de uso con mayor ROI y valida factibilidad técnica. Tu nivel permite arrancar rápido.'],
-         ['Fase 02 · Diseño','Blueprint de arquitectura hub-and-spoke','Define los patrones técnicos (P1-P7) y el modelo operativo para escalar. Includes componentes 05 y 06.'],
-         ['Fase 03 · Construcción','Fábrica de IA - Stage-Gate CMMI L3','Construye y despliega iniciativas con pruebas T1-T6 y loops de mejora continua.']]
-      : [['Fase 03 · Construcción avanzada','Escalar iniciativas existentes con MLOps','Tu madurez permite ir directo a construcción. Define el portafolio de agentes y escala con gobernanza.'],
-         ['Fase 04 · Operación','MLOps + Loop anual de madurez','Implementa monitoreo de modelos, detección de drift y el ciclo de mejora continua del CoE.'],
-         ['Siguiente nivel · IA Nativa','Track B: reimaginar procesos clave con IA','Con Track A estable, diseña 1-2 procesos Track B que diferencien tu organización en el mercado.']];
+    // Selecciona los pasos de ruta según el avg del respondente
+    const rutaBlock = ROUTE.find(r => avg <= r.maxAvg) || ROUTE[ROUTE.length - 1];
+    const rutaSteps = rutaBlock.steps;
 
     const rutaHtml = rutaSteps.map((step, i) => `<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #e0e7ff"><div style="min-width:34px;height:34px;border-radius:50%;background:#3730a3;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">${i+1}</div><div><div style="font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.06em;color:#6366f1;margin-bottom:3px">${step[0]}</div><div style="font-size:13px;font-weight:700;color:#1e1b4b;margin-bottom:3px">${step[1]}</div><div style="font-size:12px;color:#4338ca;line-height:1.5">${step[2]}</div></div></div>`).join('');
 
