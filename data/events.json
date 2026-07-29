@@ -583,26 +583,100 @@
   },
   {
     "eventId": "evt_madurez_mkt_v1",
-    "eventName": "Diagnóstico de Madurez en Marketing Digital",
     "slug": "madurez-marketing",
-    "heroDesc": "Diagnóstico de madurez en marketing digital y generación de demanda. 14 preguntas, 6 minutos. Recibirá un reporte con su nivel, las brechas que más pesan y por dónde empezar.",
-    "clientLogo": "",
-    "orgName": "TADAH!",
+    "eventName": "Diagnóstico de Madurez en Marketing Digital",
+    "orgName": "",
     "orgSub": "marketing digital B2B",
+    "heroDesc": "Diagnóstico de madurez en marketing digital y generación de demanda. 31 preguntas, unos 12 minutos. Recibirá un reporte con su nivel de madurez, las brechas que más pesan y por dónde empezar.",
+    "clientLogo": "",
     "ctaText": "Agendar sesión de diagnóstico",
     "ctaUrl": "",
     "active": true,
     "ccAdmin": true,
     "questions": [
       {
-        "id": "mC1",
+        "id": "mP1",
         "type": "open",
         "required": true,
         "label": "¿Cuáles son sus líneas de negocio o servicio? Nómbrelas como se llaman internamente.",
         "placeholder": "Ej. Consultoría, Soporte gestionado, Licenciamiento…"
       },
       {
-        "id": "mC2",
+        "id": "mP2",
+        "type": "open",
+        "required": true,
+        "label": "¿Cuál de esas líneas es la prioridad de crecimiento este año, y por qué?",
+        "placeholder": "La línea y la razón en una o dos frases"
+      },
+      {
+        "id": "mP3",
+        "type": "open",
+        "required": true,
+        "label": "¿Cuál genera hoy más leads, y cuál cree que debería generar más?",
+        "placeholder": "Puede ser la misma o distintas"
+      },
+      {
+        "id": "mP4",
+        "type": "single",
+        "required": true,
+        "label": "¿Existe meta o cuota de leads por línea de negocio?",
+        "options": [
+          "Sí, documentada y con seguimiento periódico",
+          "Sí, pero es informal o no se revisa",
+          "No hay meta separada por línea",
+          "No lo sé"
+        ]
+      },
+      {
+        "id": "mP5",
+        "type": "single",
+        "required": true,
+        "label": "¿El comprador y el ciclo de venta varían entre líneas?",
+        "options": [
+          "Muy distintos: cada línea vende a alguien diferente",
+          "Algo distintos, con traslape",
+          "Prácticamente iguales",
+          "No lo tenemos analizado"
+        ]
+      },
+      {
+        "id": "mP6",
+        "type": "single",
+        "required": true,
+        "label": "¿Los clientes repiten, renuevan o amplían su contratación?",
+        "options": [
+          "La mayoría repite o renueva",
+          "Algunos repiten, sin patrón claro",
+          "Casi ninguno regresa",
+          "No lo medimos"
+        ]
+      },
+      {
+        "id": "mP7",
+        "type": "single",
+        "required": true,
+        "label": "¿Llegan clientes por recomendación de otro cliente, sin que ustedes los busquen?",
+        "options": [
+          "Sí, es una fuente relevante de negocio",
+          "Ocurre ocasionalmente",
+          "Casi nunca",
+          "No lo registramos"
+        ]
+      },
+      {
+        "id": "mP8",
+        "type": "single",
+        "required": true,
+        "label": "¿Las ventas se cierran al precio propuesto?",
+        "options": [
+          "Sí, el precio se sostiene",
+          "Con descuento moderado",
+          "Hay que descontar fuerte para ganar",
+          "No lo medimos"
+        ]
+      },
+      {
+        "id": "mN1",
         "type": "single",
         "required": true,
         "label": "¿Cuántos leads generó la organización el año pasado, en número absoluto?",
@@ -615,7 +689,7 @@
         ]
       },
       {
-        "id": "mC3",
+        "id": "mN2",
         "type": "single",
         "required": true,
         "label": "De esos leads, ¿qué proporción genera marketing digital (sin contar eventos ni prospección de ventas)?",
@@ -628,22 +702,102 @@
         ]
       },
       {
-        "id": "mC4",
+        "id": "mN3",
+        "type": "single",
+        "required": true,
+        "label": "¿Conocen el costo de adquisición de un lead calificado?",
+        "options": [
+          "Sí, desglosado por canal",
+          "Sí, pero solo el promedio global",
+          "No lo calculamos",
+          "No tenemos definido qué es un lead calificado"
+        ]
+      },
+      {
+        "id": "mN4",
+        "type": "single",
+        "required": true,
+        "label": "¿Conocen la tasa de conversión de lead a oportunidad comercial?",
+        "options": [
+          "Sí, se mide y se revisa",
+          "Tenemos un aproximado",
+          "No la medimos"
+        ]
+      },
+      {
+        "id": "mK1",
         "type": "multi-open",
         "required": true,
-        "label": "¿Qué canales digitales operan hoy de forma activa?",
+        "label": "¿Qué indicadores reporta marketing hoy? Seleccione todos los que apliquen.",
+        "options": [
+          "Alcance e impresiones",
+          "Visitas al sitio",
+          "Seguidores e interacción en redes",
+          "Leads totales",
+          "Leads calificados por marketing (MQL)",
+          "Oportunidades aceptadas por ventas (SQL)",
+          "Pipeline generado",
+          "Ingreso influido o atribuido",
+          "Costo por lead o costo de adquisición",
+          "Retorno de la inversión en medios",
+          "No reportamos indicadores de forma regular"
+        ]
+      },
+      {
+        "id": "mK2",
+        "type": "single",
+        "required": true,
+        "label": "¿Con qué frecuencia se revisan formalmente esos indicadores?",
+        "options": [
+          "Semanal",
+          "Mensual",
+          "Trimestral",
+          "Solo cuando alguien los pide",
+          "No hay revisión formal"
+        ]
+      },
+      {
+        "id": "mK3",
+        "type": "single",
+        "required": true,
+        "label": "¿Quién participa en esa revisión?",
+        "options": [
+          "Solo el equipo de marketing",
+          "Marketing y ventas juntos",
+          "Marketing, ventas y dirección general",
+          "Nadie de forma sistemática"
+        ]
+      },
+      {
+        "id": "mK4",
+        "type": "single",
+        "required": true,
+        "label": "¿Los indicadores tienen meta numérica y línea base de dónde parten?",
+        "options": [
+          "Sí, ambas cosas y están escritas",
+          "Hay meta, pero no línea base",
+          "Ni meta ni línea base definidas",
+          "No lo sé"
+        ]
+      },
+      {
+        "id": "mC1",
+        "type": "multi-open",
+        "required": true,
+        "label": "¿Qué canales digitales operan hoy de forma sostenida?",
         "options": [
           "Pauta de búsqueda (Google Ads)",
-          "SEO y contenido",
+          "SEO y contenido con intención de búsqueda",
           "Pauta social profesional (LinkedIn Ads)",
+          "Pauta en redes sociales (Meta, Instagram, TikTok)",
           "Redes sociales orgánicas",
-          "Email y nutrición",
-          "ABM / cuentas objetivo",
+          "Email y nutrición de leads",
+          "ABM o trabajo sobre cuentas objetivo nombradas",
           "Ninguno de forma sostenida"
         ]
       },
       {
-        "id": "mC5",
+        "id": "mC2",
         "type": "single",
         "required": true,
         "label": "¿Cuál es el presupuesto anual de medios digitales, separado del de eventos?",
@@ -652,12 +806,49 @@
           "Menos de $20,000 USD",
           "$20,000 – $100,000 USD",
           "$100,000 – $300,000 USD",
-          "Más de $300,000 USD"
+          "Más de $300,000 USD",
+          "No lo conozco"
         ]
       },
       {
-        "id": "mC6",
+        "id": "mV1",
         "type": "single",
+        "required": true,
+        "label": "Cuando ventas descarta un lead de marketing, ¿queda registrado el motivo?",
+        "options": [
+          "Sí, en el CRM y se revisa",
+          "Sí, pero nadie lo revisa",
+          "Se comenta de manera informal",
+          "No queda registro"
+        ]
+      },
+      {
+        "id": "mV2",
+        "type": "single",
+        "required": true,
+        "label": "¿Existe un compromiso de tiempo de respuesta de ventas ante un lead nuevo?",
+        "options": [
+          "Sí, está escrito y se mide su cumplimiento",
+          "Existe como acuerdo verbal",
+          "No existe",
+          "No lo sé"
+        ]
+      },
+      {
+        "id": "mE1",
+        "type": "single",
+        "required": true,
+        "label": "¿Alguien del equipo ha administrado presupuesto de pauta digital antes?",
+        "options": [
+          "Sí, con presupuesto significativo y de forma continua",
+          "Sí, de forma puntual o con presupuesto pequeño",
+          "No, sería la primera vez",
+          "Lo lleva un tercero externo"
+        ]
+      },
+      {
+        "id": "mF1",
+        "type": "multi-open",
         "required": true,
         "label": "¿Cuál considera que es hoy el principal freno para generar más demanda?",
         "options": [
@@ -666,15 +857,16 @@
           "No hay una estrategia de canal definida",
           "El equipo no tiene capacidad ni experiencia digital",
           "Marketing y ventas no están alineados",
-          "Falta presupuesto"
+          "Falta presupuesto",
+          "La competencia se movió más rápido"
         ]
       },
       {
         "id": "mA1",
         "type": "scale",
         "required": true,
-        "label": "Oferta y product-market fit",
-        "sub": "Sus ofertas tienen clientes que repiten, referidos espontáneos y precio que se sostiene sin descuento fuerte — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Oferta y product-market fit: sus ofertas tienen clientes que repiten, referidos espontáneos y precio que se sostiene sin descuento fuerte",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -682,8 +874,8 @@
         "id": "mA2",
         "type": "scale",
         "required": true,
-        "label": "Datos y atribución",
-        "sub": "Puede rastrear un lead digital desde el clic hasta el negocio cerrado, con definiciones compartidas de lead calificado — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Datos y atribución: pueden rastrear un lead digital desde el clic hasta el negocio cerrado, con definiciones compartidas de lead calificado",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -691,8 +883,8 @@
         "id": "mA3",
         "type": "scale",
         "required": true,
-        "label": "Objetivos y medición",
-        "sub": "Los objetivos de marketing están escritos, tienen línea base y se expresan como resultado de negocio, no como actividad — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "KPIs y medición: los indicadores que reportan son de demanda y negocio, se revisan con periodicidad fija y se usan para tomar decisiones",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -700,8 +892,8 @@
         "id": "mA4",
         "type": "scale",
         "required": true,
-        "label": "Canales digitales",
-        "sub": "Los canales activos tienen responsable, presupuesto y costo por lead conocido — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Canales digitales: los canales activos tienen responsable, presupuesto asignado y costo por lead conocido",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -709,8 +901,8 @@
         "id": "mA5",
         "type": "scale",
         "required": true,
-        "label": "Activos digitales",
-        "sub": "El sitio convierte, se pueden publicar páginas sin depender de un tercero y las herramientas contratadas se usan — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Objetivos: están escritos, aprobados, con línea base, y expresados como resultado de negocio y no como actividad",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -718,8 +910,8 @@
         "id": "mA6",
         "type": "scale",
         "required": true,
-        "label": "Procesos y gobierno",
-        "sub": "Existe acuerdo escrito con ventas sobre qué es un lead válido, tiempo de respuesta y motivo de rechazo — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Activos digitales: el sitio convierte, pueden publicar páginas sin depender de un tercero y las herramientas contratadas se usan",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
@@ -727,22 +919,201 @@
         "id": "mA7",
         "type": "scale",
         "required": true,
-        "label": "Gente y capacidades",
-        "sub": "Hay quién ejecute: experiencia previa administrando pauta y tiempo real disponible para ejecución — 0 = no existe · 1 = informal, es percepción del equipo · 2 = documentado pero no se usa para decidir · 3 = se mide y se usa para decidir",
+        "label": "Procesos y gobierno: existe acuerdo escrito con ventas sobre qué es un lead válido, tiempo de respuesta y motivo de rechazo",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
         "min": 0,
         "max": 3
       },
       {
-        "id": "mC7",
+        "id": "mA8",
+        "type": "scale",
+        "required": true,
+        "label": "Gente y capacidades: hay quién ejecute, con experiencia previa y tiempo real disponible para ejecución",
+        "sub": "0 = no existe · 1 = informal, percepción del equipo · 2 = documentado, no se usa para decidir · 3 = se mide y se decide con ello",
+        "min": 0,
+        "max": 3
+      },
+      {
+        "id": "mZ1",
         "type": "open",
         "required": false,
-        "label": "¿Hay algo del contexto que deberíamos saber para interpretar bien estas respuestas? (opcional)",
-        "placeholder": "Cambios recientes, restricciones, prioridades del año…"
+        "label": "¿Hay algo del contexto que deberíamos saber para interpretar bien estas respuestas?",
+        "placeholder": "Cambios recientes, restricciones, prioridades del año… (opcional)"
       }
     ],
-    "systemPrompt": "Eres un consultor senior de marketing digital B2B y generación de demanda. Analizas el diagnóstico de madurez de marketing digital de una organización y generas un reporte ejecutivo.\n\nMODELO DE MADUREZ (7 dimensiones, escala 0 a 3):\nmA1 Oferta y product-market fit (peso 25%) — evidencia de que el mercado jala la oferta\nmA2 Datos y atribución (peso 20%) — capacidad de rastrear el origen del negocio\nmA3 Objetivos y medición (15%) — objetivos verificables con línea base\nmA4 Canales digitales (15%) — canales con responsable, presupuesto y costo conocido\nmA5 Activos digitales (10%) — sitio, páginas, herramientas\nmA6 Procesos y gobierno (10%) — alineación con ventas\nmA7 Gente y capacidades (5%) — quién ejecuta\n\nNIVELES: Inicial (0-1.0) · Emergente (1.1-1.8) · Estructurado (1.9-2.4) · Gobernado (2.5-3.0)\n\nPRINCIPIOS QUE DEBES APLICAR:\n1. El marketing digital escala lo que ya funciona, no arregla lo que no funciona. Si mA1 es bajo, la recomendación NO es más inversión en canales: es validar la oferta primero.\n2. Sin atribución (mA2 bajo) no se puede comprometer ningún resultado. Dilo con claridad.\n3. Un porcentaje sin número absoluto no dimensiona nada. Si el respondente no sabe cuántos leads genera, señálalo como el hallazgo más importante.\n4. Nunca recomiendes todos los canales a la vez. Prioriza uno o dos.\n5. Distingue siempre hipótesis de hechos verificados.\n6. No prometas resultados sin aclarar los supuestos.\n\nTONO: ejecutivo, directo, sin jerga de agencia. Lector: dirección general o dirección de marketing.\n\nIMPORTANTE — este NO es un diagnóstico de inteligencia artificial. Ignora cualquier referencia a CoE, Track A, Track B o patrones de IA en las instrucciones de formato. Interpreta las 5 secciones así:\n1. ANÁLISIS — posición actual, fortalezas reales, brechas, oportunidad concreta\n2. BENCHMARK — cómo se compara con empresas B2B de su tamaño y sector\n3. BRECHAS — las 3 dimensiones más bajas: nombre + 2 oraciones sobre qué impide en el negocio y qué se hace primero\n4. CONTEXTO — 3 observaciones sobre qué funciona hoy en su categoría y 2 riesgos de invertir antes de tiempo\n5. INICIATIVAS — 3 acciones concretas priorizadas: nombre + qué resuelve + plazo realista + qué se necesita para arrancar\n\nResponde SOLO texto plano separado por ===. Sin HTML, sin markdown.",
-    "reportTemplate": "<div style=\"font-family:Inter,'Segoe UI',Arial,sans-serif;max-width:680px;margin:0 auto;background:#fff;color:#1e293b\">\n<div style=\"background:linear-gradient(135deg,#0b1a30,#1a3a6b);padding:36px 40px;color:#fff\">\n  <div style=\"font-family:monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a7f3d0;margin-bottom:10px\">Diagnóstico de Madurez en Marketing Digital</div>\n  <h1 style=\"margin:0 0 6px;font-size:24px;font-weight:800\">{{EMPRESA}}</h1>\n  <p style=\"margin:0;font-size:13px;color:rgba(255,255,255,.7)\">{{NOMBRE}} · {{CARGO}}</p>\n</div>\n\n<div style=\"padding:32px 40px;text-align:center;border-bottom:1px solid #e2e8f0\">\n  <div style=\"display:inline-block;border:2px solid #a7f3d0;background:#f0fdf9;border-radius:12px;padding:20px 44px\">\n    <div style=\"font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#0d9488;margin-bottom:4px\">Score global</div>\n    <div style=\"font-size:52px;font-weight:900;color:#0b1a30;line-height:1\">{{SCORE}}</div>\n    <div style=\"font-size:12px;color:#64748b;margin-top:4px\">de 100 · Nivel: {{NIVEL_GARTNER}} · Promedio {{SCORE_MADUREZ}}/3</div>\n  </div>\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 16px\">Madurez por dimensión</h2>\n  {{DIMENSIONES_BARRAS}}\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Dónde están hoy</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{ANALISIS_POSICION}}</p>\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0;background:#f8fafc\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Comparación con el mercado</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{BENCHMARK}}</p>\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 8px\">Las tres brechas que más pesan</h2>\n  {{BRECHAS}}\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0;background:#f8fafc\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Contexto de su categoría</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{INDUSTRIA_IA}}</p>\n</div>\n\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 8px\">Por dónde empezar</h2>\n  {{INICIATIVAS}}\n</div>\n\n<div style=\"padding:28px 40px;background:#eef2ff\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#1e1b4b;margin:0 0 8px\">Ruta sugerida</h2>\n  {{RUTA_COE}}\n</div>\n\n<div style=\"padding:32px 40px;text-align:center;background:#0b1a30\">\n  <a href=\"{{CTA_URL}}\" style=\"display:inline-block;background:linear-gradient(135deg,#0d9488,#0597ff);color:#fff;font-weight:700;font-size:15px;padding:14px 36px;border-radius:8px;text-decoration:none\">{{CTA_TEXT}}</a>\n</div>\n</div>",
+    "dimensions": [
+      {
+        "id": "mA1",
+        "label": "Oferta y product-market fit",
+        "tag": "Validación de oferta"
+      },
+      {
+        "id": "mA2",
+        "label": "Datos y atribución",
+        "tag": "Instrumentación"
+      },
+      {
+        "id": "mA3",
+        "label": "KPIs y medición",
+        "tag": "Gobierno del dato"
+      },
+      {
+        "id": "mA4",
+        "label": "Canales digitales",
+        "tag": "Estrategia de canal"
+      },
+      {
+        "id": "mA5",
+        "label": "Objetivos",
+        "tag": "Línea base"
+      },
+      {
+        "id": "mA6",
+        "label": "Activos digitales",
+        "tag": "Infraestructura"
+      },
+      {
+        "id": "mA7",
+        "label": "Procesos y gobierno",
+        "tag": "Alineación con ventas"
+      },
+      {
+        "id": "mA8",
+        "label": "Gente y capacidades",
+        "tag": "Capacidad de ejecución"
+      }
+    ],
+    "levels": [
+      "",
+      "Inicial",
+      "Emergente",
+      "Estructurado",
+      "Gobernado"
+    ],
+    "routeSteps": [
+      {
+        "maxAvg": 1.0,
+        "steps": [
+          [
+            "Fase 1 · Línea base",
+            "Determinar el número real de leads por origen",
+            "Sin cifra base verificable cualquier meta es inventada. Primer entregable: leads por canal, en número absoluto y con fuente."
+          ],
+          [
+            "Fase 1 · Definiciones",
+            "Acordar con ventas qué es un lead calificado",
+            "Definición escrita y aplicada en el sistema. Es la condición para poder medir cualquier cosa después."
+          ],
+          [
+            "Decisión",
+            "Cotizar el alcance real, ya con datos",
+            "Al cerrar la línea base se sabe si el reto es duplicar una base pequeña o escalar una grande. Son proyectos distintos."
+          ]
+        ]
+      },
+      {
+        "maxAvg": 1.8,
+        "steps": [
+          [
+            "Fase 1 · Línea base",
+            "Instrumentar medición y clasificar el portafolio",
+            "Trazabilidad de punta a punta y clasificación de cada línea según evidencia de mercado."
+          ],
+          [
+            "Fase 2 · Piloto acotado",
+            "Un canal, una línea validada, un mercado",
+            "Presupuesto de aprendizaje con criterios escritos de expansión, no despliegue multicanal."
+          ],
+          [
+            "Punto de decisión",
+            "Expandir solo contra evidencia",
+            "La expansión se aprueba con resultados del piloto, no con el calendario."
+          ]
+        ]
+      },
+      {
+        "maxAvg": 2.4,
+        "steps": [
+          [
+            "Fase 1 · Diagnóstico corto",
+            "Cerrar los huecos de consistencia",
+            "Los fundamentos existen: el trabajo es disciplina de uso del dato y gobierno."
+          ],
+          [
+            "Fase 2 · Estrategia por línea",
+            "Priorizar según madurez de cada oferta",
+            "Secuencia de inversión por línea, no presupuesto parejo entre todas."
+          ],
+          [
+            "Fase 3 · Escala",
+            "Ampliar canales con metas conservadoras",
+            "Expansión progresiva sostenida por la medición ya instalada."
+          ]
+        ]
+      },
+      {
+        "maxAvg": 3.0,
+        "steps": [
+          [
+            "Fase 1 · Alineación",
+            "Validar prioridades y ambición del período",
+            "La restricción no son los fundamentos, es la velocidad."
+          ],
+          [
+            "Fase 2 · Escala",
+            "Concentrar inversión en las líneas validadas",
+            "Presupuesto donde ya hay evidencia de retorno."
+          ],
+          [
+            "Fase 3 · Ventaja",
+            "Abrir canales nuevos y liderazgo de categoría",
+            "Con la máquina operando, el valor está en diferenciación, no en instrumentación."
+          ]
+        ]
+      }
+    ],
+    "scoring": {
+      "scaleMin": 0,
+      "scaleMax": 3,
+      "weights": {
+        "mA1": 20,
+        "mA2": 20,
+        "mA3": 15,
+        "mA4": 15,
+        "mA5": 10,
+        "mA6": 8,
+        "mA7": 7,
+        "mA8": 5
+      },
+      "levelBands": [
+        {
+          "maxAvg": 1.0,
+          "label": "Inicial"
+        },
+        {
+          "maxAvg": 1.8,
+          "label": "Emergente"
+        },
+        {
+          "maxAvg": 2.4,
+          "label": "Estructurado"
+        },
+        {
+          "maxAvg": 3.0,
+          "label": "Gobernado"
+        }
+      ],
+      "veto": {
+        "dimensions": [
+          "mA2"
+        ],
+        "maxScore": 1
+      }
+    },
+    "trackLabels": [],
+    "systemPrompt": "Eres un consultor senior de marketing digital B2B y generación de demanda. Analizas un diagnóstico de madurez y generas un reporte ejecutivo.\n\nMODELO (8 dimensiones, escala 0 a 3):\nmA1 Oferta y product-market fit (20%) · mA2 Datos y atribución (20%) · mA3 KPIs y medición (15%) · mA4 Canales digitales (15%) · mA5 Objetivos (10%) · mA6 Activos digitales (8%) · mA7 Procesos y gobierno (7%) · mA8 Gente y capacidades (5%)\n\nNIVELES: Inicial (0-1.0) · Emergente (1.1-1.8) · Estructurado (1.9-2.4) · Gobernado (2.5-3.0)\n\nPRINCIPIOS:\n1. El marketing digital escala lo que ya funciona, no arregla lo que no funciona. Si mA1 es bajo, la recomendación NO es más inversión en canales: es validar la oferta.\n2. Sin atribución no se puede comprometer ningún resultado. Dilo con claridad.\n3. Un porcentaje sin número absoluto no dimensiona nada. Si no saben cuántos leads generan, ése es el hallazgo principal.\n4. Si los KPIs que reportan son de alcance, visitas o seguidores y no de demanda, señálalo: se está midiendo lo reportable, no lo que determina el negocio.\n5. Nunca recomiendes todos los canales a la vez. Prioriza uno o dos.\n6. Distingue hipótesis de hechos verificados. No prometas resultados sin aclarar supuestos.\n7. Usa las respuestas de portafolio: si hay varias líneas con compradores distintos, advierte que una sola estrategia no sirve para todas.\n\nTONO: ejecutivo, directo, sin jerga de agencia. Lector: dirección general o dirección de marketing.\n\nESTE NO ES UN DIAGNÓSTICO DE INTELIGENCIA ARTIFICIAL. Ignora cualquier referencia a CoE, Track A, Track B o patrones de IA en las instrucciones de formato. Las 5 secciones son:\n1. ANÁLISIS — posición actual, fortaleza real, brecha estructural, oportunidad concreta\n2. BENCHMARK — comparación con empresas B2B de su tamaño y sector, con cifras\n3. BRECHAS — las 3 dimensiones más bajas. Empieza cada una con el nombre EXACTO de la dimensión, luego dos puntos y dos oraciones: qué impide en el negocio y qué se hace primero. Una por línea.\n4. CONTEXTO — 3 observaciones sobre qué está funcionando hoy en su categoría y 2 riesgos de invertir antes de tiempo\n5. INICIATIVAS — exactamente 3, cada una empezando en una línea nueva con el formato \"1. Título de la iniciativa\" y en la línea siguiente la descripción con plazo y qué se necesita para arrancar. Respeta la numeración 1. 2. 3. al inicio de línea.\n\nResponde SOLO texto plano separado por ===. Sin HTML, sin markdown, sin asteriscos.",
     "createdAt": "2026-07-28T00:00:00.000Z",
-    "updatedAt": "2026-07-29T04:49:51.162Z"
+    "updatedAt": "2026-07-29T06:00:00.000Z",
+    "reportTemplate": "<div style=\"font-family:Inter,'Segoe UI',Arial,sans-serif;max-width:680px;margin:0 auto;background:#fff;color:#1e293b\">\n<div style=\"background:linear-gradient(135deg,#0b1a30,#1a3a6b);padding:36px 40px;color:#fff\">\n  <div style=\"font-family:monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a7f3d0;margin-bottom:10px\">Diagnóstico de Madurez en Marketing Digital</div>\n  <h1 style=\"margin:0 0 6px;font-size:24px;font-weight:800\">{{EMPRESA}}</h1>\n  <p style=\"margin:0;font-size:13px;color:rgba(255,255,255,.7)\">{{NOMBRE}} &middot; {{CARGO}}</p>\n</div>\n<div style=\"padding:32px 40px;text-align:center;border-bottom:1px solid #e2e8f0\">\n  <div style=\"display:inline-block;border:2px solid #a7f3d0;background:#f0fdf9;border-radius:12px;padding:20px 44px\">\n    <div style=\"font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#0d9488;margin-bottom:4px\">Score global</div>\n    <div style=\"font-size:52px;font-weight:900;color:#0b1a30;line-height:1\">{{SCORE}}</div>\n    <div style=\"font-size:12px;color:#64748b;margin-top:4px\">de 100 &middot; Nivel: {{NIVEL_GARTNER}} &middot; Promedio {{SCORE_MADUREZ}} de 3</div>\n  </div>\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 16px\">Madurez por dimensión</h2>\n  {{DIMENSIONES_BARRAS}}\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Dónde están hoy</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{ANALISIS_POSICION}}</p>\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0;background:#f8fafc\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Comparación con el mercado</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{BENCHMARK}}</p>\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 8px\">Las tres brechas que más pesan</h2>\n  {{BRECHAS}}\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0;background:#f8fafc\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 12px\">Contexto de su categoría</h2>\n  <p style=\"font-size:14px;line-height:1.75;color:#374151;margin:0;white-space:pre-line\">{{INDUSTRIA_IA}}</p>\n</div>\n<div style=\"padding:28px 40px;border-bottom:1px solid #e2e8f0\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#0b1a30;margin:0 0 8px\">Por dónde empezar</h2>\n  {{INICIATIVAS}}\n</div>\n<div style=\"padding:28px 40px;background:#eef2ff\">\n  <h2 style=\"font-size:15px;font-weight:800;color:#1e1b4b;margin:0 0 8px\">Ruta sugerida</h2>\n  {{RUTA_COE}}\n</div>\n<div style=\"padding:32px 40px;text-align:center;background:#0b1a30\">\n  <a href=\"{{CTA_URL}}\" style=\"display:inline-block;background:linear-gradient(135deg,#0d9488,#0597ff);color:#fff;font-weight:700;font-size:15px;padding:14px 36px;border-radius:8px;text-decoration:none\">{{CTA_TEXT}}</a>\n</div>\n</div>"
   }
 ]
