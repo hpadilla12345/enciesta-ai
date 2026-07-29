@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuestionarios · AI Survey Platform · Grupo Scanda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050d1a; --surface: #0a1628; --surface2: #0e203d; --surface3: #111e35;
+    --accent: #0edda9; --accent2: #5fa8ff; --warn: #ffb340; --danger: #ff5a6e;
+    --text: #f0f4f8; --muted: #7a8fa8; --border: rgba(14,221,169,0.15);
+    --radius: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .mono { font-family: 'DM Mono', monospace; }
+
+  .login-screen { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+  .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 48px; width: 380px; text-align: center; }
+  .login-box h1 { font-family: 'Syne', sans-serif; font-size: 22px; margin-bottom: 8px; }
+  .login-box p { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+  .login-box input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text); font-size: 14px; outline: none; margin-bottom: 12px; }
+  .login-box input:focus { border-color: var(--accent); }
+  .login-btn { width: 100%; padding: 13px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #08c99a); color: #050d1a; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; border: none; }
+  .login-error { color: var(--danger); font-size: 12px; margin-top: 8px; display: none; }
+
+  .app { display: none; }
+  .app.active { display: flex; min-height: 100vh; }
+  .nav-sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
+  .nav-logo { padding: 20px; border-bottom: 1px solid var(--border); }
+  .nav-logo-mark { display: flex; align-items: center; gap: 10px; }
+  .mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #050d1a; }
+  .mark-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; }
+  .mark-sub { font-size: 10px; color: var(--muted); letter-spacing: .05em; }
+  .nav-label { padding: 16px 20px 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 13.5px; cursor: pointer; color: var(--muted); }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(14,221,169,0.1); color: var(--accent); }
+  .nav-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+  .nav-logout { font-size: 12.5px; color: var(--muted); cursor: pointer; }
+
+  .main-content { margin-left: 220px; flex: 1; padding: 32px 40px; }
+  .topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; }
+  .topbar-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
+  .topbar-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .btn { border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'DM Sans'; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #08c99a); color: #050d1a; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: rgba(255,90,110,.12); color: var(--danger); border: 1px solid rgba(255,90,110,.3); }
+  .btn-sm { padding: 8px 14px; font-size: 12px; }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 16.5px; font-weight: 700; }
+  .badge { font-size: 10.5px; padding: 3px 10px; border-radius: 999px; font-weight: 700; letter-spacing: .03em; }
+  .badge.on { background: rgba(14,221,169,.15); color: var(--accent); }
+  .badge.off { background: rgba(122,143,168,.15); color: var(--muted); }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 16px; }
+  .card-actions { display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+
+  .editor-tabs { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+  .editor-tab { flex: 1; text-align: center; padding: 14px; font-size: 12.5px; font-weight: 700; letter-spacing: .05em; color: var(--muted); cursor: pointer; }
+  .editor-tab.active { background: rgba(14,221,169,.1); color: var(--accent); }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 16px; }
+  .panel-label { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--accent); text-transform: uppercase; margin-bottom: 18px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 7px; text-transform: uppercase; letter-spacing: .04em; }
+  .field input[type=text], .field textarea, .field select {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 11px 14px; color: var(--text); font-family: 'DM Sans'; font-size: 14px; outline: none;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea.code { font-family: 'DM Mono', monospace; font-size: 12px; min-height: 260px; resize: vertical; white-space: pre; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .drop { border: 1.5px dashed var(--border); border-radius: 10px; padding: 22px; text-align: center; color: var(--muted); font-size: 13px; cursor: pointer; margin-bottom: 14px; }
+  .drop:hover { border-color: var(--accent); color: var(--text); }
+  .link-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 13.5px; color: var(--accent); word-break: break-all; margin-bottom: 14px; }
+
+  .resp-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 12px; }
+  .resp-meta { display: flex; gap: 12px; color: var(--muted); margin-bottom: 6px; font-size: 11.5px; }
+  .resp-item pre { white-space: pre-wrap; word-break: break-all; font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text); max-height: 160px; overflow: auto; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 13px; z-index: 2000; display: none; }
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Cuestionarios libres</h1>
+    <p>Grupo Scanda · AI Survey Platform</p>
+    <input type="password" id="loginPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
+    <div class="login-error" id="loginError">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <aside class="nav-sidebar">
+    <div class="nav-logo">
+      <div class="nav-logo-mark">
+        <div class="mark">S</div>
+        <div><div class="mark-text">GRUPO SCANDA</div><div class="mark-sub">AI SURVEYS</div></div>
+      </div>
+    </div>
+    <div class="nav-label">Gestión</div>
+    <div class="nav-item" onclick="location.href='/admin/'"><span>📋</span>&nbsp;Eventos</div>
+    <div class="nav-item active"><span>📄</span>&nbsp;Cuestionarios libres</div>
+    <div class="nav-bottom"><div class="nav-logout" onclick="logout()">🚪 Cerrar sesión</div></div>
+  </aside>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbarTitle">Cuestionarios libres</div>
+        <div class="topbar-sub" id="topbarSub">HTML personalizado, con respuestas guardadas en tu GitHub</div>
+      </div>
+      <div style="display:flex;gap:8px" id="topbarActions">
+        <button class="btn btn-primary" onclick="showEditor()">+ Nuevo Cuestionario</button>
+      </div>
+    </div>
+
+    <div id="listPage"><div class="grid" id="formsGrid"></div></div>
+
+    <div id="editorPage" style="display:none">
+      <div class="editor-tabs">
+        <div class="editor-tab active" data-tab="info" onclick="switchTab('info')">① INFO</div>
+        <div class="editor-tab" data-tab="html" onclick="switchTab('html')">② HTML</div>
+        <div class="editor-tab" data-tab="link" onclick="switchTab('link')">③ LINK</div>
+      </div>
+
+      <div class="panel tab-info">
+        <div class="panel-label">Información del cuestionario</div>
+        <div class="row2">
+          <div class="field"><label>Nombre del cuestionario *</label><input type="text" id="fName" placeholder="Ej. Assessment OTB · Grupo Piagui"></div>
+          <div class="field"><label>Slug URL *</label><input type="text" id="fSlug" placeholder="piagui-otb"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Cliente / Organización</label><input type="text" id="fOrg" placeholder="Grupo Piagui"></div>
+          <div class="field"><label>Estado</label>
+            <select id="fActive"><option value="true">✅ Activo (acepta respuestas)</option><option value="false">⛔ Inactivo</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Notas internas <span style="text-transform:none;color:var(--muted)">(opcional, solo para tu referencia)</span></label>
+          <textarea id="fNotes" rows="3" placeholder="Ej. Discovery de casos de uso OTB, fase 1 antes del taller presencial..."></textarea>
+        </div>
+      </div>
+
+      <div class="panel tab-html" style="display:none">
+        <div class="panel-label">HTML del cuestionario</div>
+        <div class="drop" onclick="document.getElementById('fileInput').click()">📄 Arrastra o haz clic para cargar un archivo .html</div>
+        <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="loadHtmlFile(event)">
+        <div class="field"><label>O pega el código directamente</label>
+          <textarea id="fHtml" class="code" placeholder="&lt;!DOCTYPE html&gt;..."></textarea>
+        </div>
+      </div>
+
+      <div class="panel tab-link" style="display:none">
+        <div class="panel-label">Link público</div>
+        <div class="link-box" id="linkBox">Guarda el cuestionario para generar su link</div>
+        <div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" id="openLinkBtn" onclick="openPublicLink()" disabled>🔗 Abrir y probar</button></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-top:10px">
+        <button class="btn btn-secondary" onclick="showList()">← Cancelar</button>
+        <button class="btn btn-primary" onclick="saveForm()">💾 Guardar cuestionario</button>
+      </div>
+    </div>
+
+    <div id="responsesPage" style="display:none">
+      <button class="btn btn-secondary btn-sm" onclick="showList()" style="margin-bottom:16px">← Volver</button>
+      <div class="panel">
+        <div class="panel-label" id="responsesTitle">Respuestas</div>
+        <div id="responsesList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_URL = location.origin;
+let adminPass = '';
+let allForms = [];
+let editingFormId = null;
+
+async function doLogin() {
+  const pass = document.getElementById('loginPass').value;
+  if (!pass) return;
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = 'Verificando...'; btn.disabled = true;
+  try {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-forms?adminPassword=${encodeURIComponent(pass)}`);
+    if (res.ok) { adminPass = pass; enterApp(); }
+    else if (res.status === 401) {
+      document.getElementById('loginError').textContent = 'Contraseña incorrecta';
+      document.getElementById('loginError').style.display = 'block';
+    } else { adminPass = pass; enterApp('⚠️ Functions con error — modo limitado'); }
+  } catch (_) { adminPass = pass; enterApp('⚠️ Functions no disponibles'); }
+  finally { btn.textContent = 'Ingresar →'; btn.disabled = false; }
+}
+function enterApp(warning) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  if (warning) showToast(warning);
+  loadForms();
+}
+function logout() {
+  adminPass = ''; document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('active'); document.getElementById('loginPass').value = '';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3500);
+}
+
+/* ===== LIST ===== */
+async function loadForms() {
+  document.getElementById('formsGrid').innerHTML = `<div class="empty-state">Cargando…</div>`;
+  try {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-forms?adminPassword=${encodeURIComponent(adminPass)}`);
+    const data = await res.json();
+    allForms = data.forms || [];
+  } catch (_) { allForms = []; }
+  await renderFormsGrid();
+}
+
+async function renderFormsGrid() {
+  const grid = document.getElementById('formsGrid');
+  if (allForms.length === 0) { grid.innerHTML = `<div class="empty-state">Aún no hay cuestionarios. Crea el primero con "+ Nuevo Cuestionario".</div>`; return; }
+
+  grid.innerHTML = allForms.map(f => `<div class="card" id="card-${f.formId}">
+      <div class="card-top">
+        <div class="card-title">${escapeHtml(f.formName || f.slug)}</div>
+        <span class="badge ${f.active === false ? 'off' : 'on'}">${f.active === false ? 'Inactivo' : 'Activo'}</span>
+      </div>
+      <div class="card-meta">
+        <span class="mono">🔗 /c/${f.slug}</span>
+        <span>📅 ${f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '—'}</span>
+        <span id="count-${f.formId}">👥 …</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editForm('${f.formId}')">✏️ Editar</button>
+        <button class="btn btn-secondary btn-sm" onclick="viewResponses('${f.formId}')">📊 Respuestas</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteForm('${f.formId}')">🗑</button>
+      </div>
+    </div>`).join('');
+
+  allForms.forEach(async f => {
+    try {
+      const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-responses?slug=${f.slug}&adminPassword=${encodeURIComponent(adminPass)}`);
+      const data = await res.json();
+      const el = document.getElementById(`count-${f.formId}`);
+      if (el) el.textContent = `👥 ${(data.responses || []).length} respuestas`;
+    } catch (_) {}
+  });
+}
+
+/* ===== EDITOR ===== */
+function showList() {
+  document.getElementById('listPage').style.display = 'block';
+  document.getElementById('editorPage').style.display = 'none';
+  document.getElementById('responsesPage').style.display = 'none';
+  document.getElementById('topbarTitle').textContent = 'Cuestionarios libres';
+  document.getElementById('topbarSub').textContent = 'HTML personalizado, con respuestas guardadas en tu GitHub';
+  document.getElementById('topbarActions').style.display = 'flex';
+  loadForms();
+}
+
+function showEditor(form) {
+  editingFormId = form ? form.formId : null;
+  document.getElementById('listPage').style.display = 'none';
+  document.getElementById('responsesPage').style.display = 'none';
+  document.getElementById('editorPage').style.display = 'block';
+  document.getElementById('topbarTitle').textContent = form ? 'Editar cuestionario' : 'Nuevo cuestionario';
+  document.getElementById('topbarSub').textContent = 'Info, HTML y link público';
+  document.getElementById('topbarActions').style.display = 'none';
+  switchTab('info');
+
+  document.getElementById('fName').value = form?.formName || '';
+  document.getElementById('fSlug').value = form?.slug || '';
+  document.getElementById('fOrg').value = form?.orgName || '';
+  document.getElementById('fActive').value = form?.active === false ? 'false' : 'true';
+  document.getElementById('fNotes').value = form?.notes || '';
+  document.getElementById('fHtml').value = '';
+  updateLinkBox(form?.slug);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.editor-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelector('.tab-info').style.display = tab === 'info' ? 'block' : 'none';
+  document.querySelector('.tab-html').style.display = tab === 'html' ? 'block' : 'none';
+  document.querySelector('.tab-link').style.display = tab === 'link' ? 'block' : 'none';
+}
+
+function loadHtmlFile(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { document.getElementById('fHtml').value = e.target.result; showToast('✅ Archivo cargado — revisa y guarda'); };
+  reader.readAsText(file);
+}
+
+function updateLinkBox(slug) {
+  const box = document.getElementById('linkBox');
+  const btn = document.getElementById('openLinkBtn');
+  if (slug) { box.textContent = `${BASE_URL}/c/${slug}`; btn.disabled = false; }
+  else { box.textContent = 'Guarda el cuestionario para generar su link'; btn.disabled = true; }
+}
+
+function openPublicLink() {
+  const slug = document.getElementById('fSlug').value.trim();
+  if (slug) window.open(`${BASE_URL}/c/${slug}`, '_blank');
+}
+
+async function saveForm() {
+  const formName = document.getElementById('fName').value.trim();
+  const slug = document.getElementById('fSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  const orgName = document.getElementById('fOrg').value.trim();
+  const active = document.getElementById('fActive').value === 'true';
+  const notes = document.getElementById('fNotes').value.trim();
+  const html = document.getElementById('fHtml').value;
+
+  if (!formName || !slug) { showToast('⚠️ Nombre y slug son obligatorios'); switchTab('info'); return; }
+  const existing = allForms.find(f => f.slug === slug && f.formId !== editingFormId);
+  if (existing) { showToast('⚠️ Ese slug ya está en uso por otro cuestionario'); switchTab('info'); return; }
+  if (!editingFormId && !html.trim()) { showToast('⚠️ Falta el HTML del cuestionario'); switchTab('html'); return; }
+
+  const formData = { formId: editingFormId, formName, slug, orgName, active, notes };
+
+  try {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/save-custom-form`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminPassword: adminPass, formData, html }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al guardar');
+    editingFormId = data.formId;
+    updateLinkBox(data.slug);
+    switchTab('link');
+    showToast('✅ Cuestionario guardado');
+    await loadForms();
+  } catch (err) {
+    showToast('❌ ' + err.message);
+  }
+}
+
+function editForm(formId) {
+  const form = allForms.find(f => f.formId === formId);
+  if (form) showEditor(form);
+}
+
+async function deleteForm(formId) {
+  const form = allForms.find(f => f.formId === formId);
+  if (!form) return;
+  if (!confirm(`¿Eliminar "${form.formName}" de la lista? El HTML y las respuestas quedan en GitHub por si lo necesitas recuperar.`)) return;
+  try {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/delete-custom-form`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminPassword: adminPass, formId }),
+    });
+    if (!res.ok) throw new Error('No se pudo eliminar');
+    showToast('🗑 Eliminado');
+    loadForms();
+  } catch (err) { showToast('❌ ' + err.message); }
+}
+
+/* ===== RESPONSES ===== */
+async function viewResponses(formId) {
+  const form = allForms.find(f => f.formId === formId);
+  if (!form) return;
+  document.getElementById('listPage').style.display = 'none';
+  document.getElementById('editorPage').style.display = 'none';
+  document.getElementById('responsesPage').style.display = 'block';
+  document.getElementById('topbarActions').style.display = 'none';
+  document.getElementById('topbarTitle').textContent = form.formName;
+  document.getElementById('topbarSub').textContent = `/c/${form.slug}`;
+  document.getElementById('responsesTitle').textContent = 'Cargando respuestas…';
+  document.getElementById('responsesList').innerHTML = '';
+
+  try {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/list-custom-responses?slug=${form.slug}&adminPassword=${encodeURIComponent(adminPass)}`);
+    const data = await res.json();
+    const responses = data.responses || [];
+    document.getElementById('responsesTitle').textContent = `${responses.length} respuesta${responses.length === 1 ? '' : 's'}`;
+    if (responses.length === 0) {
+      document.getElementById('responsesList').innerHTML = `<div class="empty-state">Aún no hay respuestas registradas.</div>`;
+      return;
+    }
+    document.getElementById('responsesList').innerHTML = responses.map((r, i) => `
+      <div class="resp-item">
+        <div class="resp-meta"><span>#${i + 1}</span><span>${r.ts ? new Date(r.ts).toLocaleString() : '—'}</span></div>
+        <pre>${escapeHtml(JSON.stringify(r, null, 2))}</pre>
+      </div>`).join('');
+  } catch (err) {
+    document.getElementById('responsesList').innerHTML = `<div class="empty-state">Error cargando respuestas: ${err.message}</div>`;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+</script>
+</body>
+</html>
