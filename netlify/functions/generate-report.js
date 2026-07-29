@@ -81,6 +81,11 @@ exports.handler = async (event) => {
     if (!systemPrompt)   systemPrompt   = eventConfig.systemPrompt   || 'Eres consultor senior del CoE-IA de Grupo Scanda.';
     if (!reportTemplate) reportTemplate = eventConfig.reportTemplate || '<div style="padding:32px"><h2>{{SCORE_MADUREZ}}/5 · {{NIVEL_GARTNER}}</h2><p>{{ANALISIS_POSICION}}</p></div>';
 
+
+    // Dimensiones, niveles y ruta: del evento si definidos, si no los defaults de IA
+    const DIMS    = (ev && ev.dimensions  && ev.dimensions.length)  ? ev.dimensions  : DEFAULT_DIMS;
+    const NIVELES = (ev && ev.levels      && ev.levels.length)      ? ev.levels      : DEFAULT_NIVELES;
+    const ROUTE   = (ev && ev.routeSteps  && ev.routeSteps.length)  ? ev.routeSteps  : DEFAULT_ROUTE;
     // ── SERVER-SIDE: calculate scores from scale answers (no Claude needed) ─
     const scores = {};
     DIMS.forEach(d => { scores[d.id] = Number(answers[d.id]) || 0; });
