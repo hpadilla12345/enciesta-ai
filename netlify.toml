@@ -35,6 +35,6 @@
   status = 301
 
 [[redirects]]
-  from = "/c/*"
-  to = "/.netlify/functions/get-custom-form?slug=:splat"
+  from = "/c/:slug"
+  to = "/.netlify/functions/get-custom-form?slug=:slug"
   status = 200
