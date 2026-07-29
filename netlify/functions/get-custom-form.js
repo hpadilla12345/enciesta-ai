@@ -3,7 +3,15 @@ const gh = require('./gh-storage');
 // Sirve el HTML del cuestionario libre como página real (no JSON).
 // Mapeado por netlify.toml: /c/:slug -> esta function con ?slug=:slug
 exports.handler = async (event) => {
-  const slug = event.queryStringParameters?.slug;
+  // La regla de netlify.toml reescribe /c/{slug} -> /.netlify/functions/get-custom-form/{slug}
+  // así que el slug llega como último segmento del path. También aceptamos ?slug=
+  // para poder probar la function directamente.
+  let slug = event.queryStringParameters?.slug;
+  if (!slug) {
+    const parts = (event.path || '').split('/').filter(Boolean);
+    const last = parts[parts.length - 1];
+    if (last && last !== 'get-custom-form') slug = last;
+  }
   if (!slug) return htmlMessage('Falta el identificador del cuestionario.');
 
   try {
