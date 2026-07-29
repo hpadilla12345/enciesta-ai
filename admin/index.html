@@ -540,6 +540,7 @@ async function doLogin() {
 }
 
 function enterApp(warning) {
+  try { sessionStorage.setItem('scanda_admin_pass', adminPass); } catch (_) {}
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('active');
   if (warning) showToast(warning);
@@ -549,6 +550,7 @@ function enterApp(warning) {
 
 function logout() {
   adminPass = '';
+  try { sessionStorage.removeItem('scanda_admin_pass'); } catch (_) {}
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('app').classList.remove('active');
   document.getElementById('loginPass').value = '';
@@ -1749,6 +1751,12 @@ function showToast(msg) {
 
 // Auto-generate slug from event name
 document.addEventListener('DOMContentLoaded', () => {
+  // Sesión compartida con /admin/cuestionarios/ — si ya hay password, no volver a pedirlo
+  try {
+    const saved = sessionStorage.getItem('scanda_admin_pass');
+    if (saved) { adminPass = saved; enterApp(); }
+  } catch (_) {}
+
   document.getElementById('ev-name').addEventListener('input', function() {
     if (!document.getElementById('ev-id').value) {
       document.getElementById('ev-slug').value = this.value
