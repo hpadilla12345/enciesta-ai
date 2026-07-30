@@ -203,5 +203,160 @@
     },
     "instrumento": "madurez-marketing-digital-v1",
     "ts": "2026-07-29T20:41:46.534Z"
+  },
+  {
+    "identificacion": {
+      "company": "Business IT",
+      "name": "Alejandra Puga",
+      "role": "Sales Support Specialist",
+      "email": "alejandra.puga@grupobusiness.it",
+      "date": "2026-07-30",
+      "industry": "Tecnología"
+    },
+    "alcance": "portafolio completo",
+    "lineas": [],
+    "puntajes": {
+      "a2_1": 3,
+      "a2_2": 3,
+      "a2_3": 1,
+      "a2_4": 1,
+      "a2_5": 3,
+      "a2_6": 1,
+      "a2_7": 0,
+      "a2_8": 0,
+      "a2_9": 1,
+      "a3_2": 2,
+      "a3_3": 2,
+      "a3_4": 2,
+      "a3_5": 3,
+      "a3_6": 2,
+      "a4_1": 0,
+      "a4_2": 0,
+      "a4_3": 0,
+      "a4_4": 0,
+      "a4_5": 0,
+      "a4_6": 0,
+      "a4_7": 3,
+      "a4_8": 0,
+      "a4_9": 3,
+      "a5_1": 3,
+      "a5_2": 3,
+      "a5_3": 2,
+      "a5_4": 3,
+      "a5_5": 2,
+      "a5_6": 3,
+      "a6_1": 0,
+      "a6_2": 3,
+      "a6_3": 1,
+      "a6_4": 3,
+      "a6_5": 1,
+      "a6_6": 0,
+      "a6_7": 1,
+      "a7_1": 1,
+      "a7_2": 1,
+      "a7_3": 1,
+      "a7_4": 2,
+      "a7_5": 0,
+      "a7_6": 1,
+      "a8_1": 1,
+      "a8_2": 1,
+      "a8_3": 2,
+      "a8_4": 3,
+      "a8_5": 1,
+      "a3_1": 3
+    },
+    "sustento": {
+      "a5_5": "Posicionamiento de Liderazgo en IA - Las campañas en su mayoría deben cumplir con este objetivo",
+      "a7_5": "Se esperaría que la consultora ganadora asuma este rol y asesore a BIT",
+      "a8_5": "Se espera que la empresa consultora no solo proponga sino que de acompañamiento",
+      "a2_3": "Centralizamos la información en CRM, pero se está iniciando un proceso de trazabilidad más estructurado",
+      "a2_4": "Va a nuestro crm de Marketing, pero no al CRM de Ventas que es el principal de la empresa",
+      "a2_6": "Tenemos seguimiento del lead después de su creación, pero no hacia atrás",
+      "a2_7": "Se está levantando esta información",
+      "a2_8": "No contamos con analytics",
+      "a2_9": "Si, pero se está iniciando su implementación",
+      "a3_2": "No todos los objetivos tienen una métrica numérica",
+      "a3_3": "Si se tiene medición semanal con comercial y quincenal con gerencia",
+      "a3_4": "Si se tiene medición semanal con comercial y quincenal con gerencia",
+      "a3_5": "Si",
+      "a3_6": "Si para H2 se determinó formatos más exitosos para generación de demanda",
+      "a5_3": "No todo es resultados de negocio sino también proyectos estratégicos",
+      "a6_5": "CRM Subutilizado",
+      "a6_7": "Tenemos un gobierno de datos pero no enfocado a contenido",
+      "a7_1": "Hay SLAs pero se deben trabajar mejor las métricas",
+      "a7_2": "se registra en el CRM pero no tenemos visibilidad",
+      "a7_3": "Tenemos lineamientos de calificación pero no tenemos lead scoring",
+      "a7_6": "se espera la propuesta de estrategia de la consultora",
+      "a8_1": "Hay un presupuesto asignado par apauta digital",
+      "a8_2": "Rol enfocado en operación no de datos",
+      "a8_4": "No dependemos de recursos temporanles"
+    },
+    "verificaciones": [
+      "Para listar nuestras líneas de negocio tuvimos que ponernos de acuerdo entre varias personas",
+      "Hay ofertas en nuestro material comercial que no aparecen en la lista anterior, o al revés",
+      "Conocemos algunos porcentajes pero no el número absoluto del que provienen",
+      "Distintas áreas de la empresa manejan cifras distintas para el mismo indicador",
+      "No hay una persona claramente responsable de los datos de marketing",
+      "Varios de nuestros objetivos están redactados como actividades más que como resultados",
+      "Tenemos una ambición declarada de posicionamiento sin una métrica que la mida",
+      "Probamos pauta digital en el pasado, se detuvo, y no tenemos claro por qué falló",
+      "Nadie en el equipo ha administrado antes un presupuesto de medios digitales"
+    ],
+    "resultado": {
+      "global": 1.57,
+      "score": 52,
+      "nivel": "Emergente",
+      "veto": false,
+      "dimensiones": {
+        "a1": {
+          "label": "Oferta y product-market fit",
+          "peso": 20,
+          "valor": null
+        },
+        "a2": {
+          "label": "Datos y atribución",
+          "peso": 20,
+          "valor": 1.44
+        },
+        "a3": {
+          "label": "KPIs y medición",
+          "peso": 15,
+          "valor": 2.33
+        },
+        "a4": {
+          "label": "Canales digitales",
+          "peso": 15,
+          "valor": 0.67
+        },
+        "a5": {
+          "label": "Objetivos",
+          "peso": 10,
+          "valor": 2.67
+        },
+        "a6": {
+          "label": "Activos digitales",
+          "peso": 8,
+          "valor": 1.29
+        },
+        "a7": {
+          "label": "Procesos y gobierno",
+          "peso": 7,
+          "valor": 1
+        },
+        "a8": {
+          "label": "Gente y capacidades",
+          "peso": 5,
+          "valor": 1.6
+        }
+      },
+      "lineas": []
+    },
+    "avance": {
+      "respondidos": 48,
+      "total": 48,
+      "porcentaje": 100
+    },
+    "instrumento": "madurez-marketing-digital-v1",
+    "ts": "2026-07-30T15:57:34.683Z"
   }
 ]
