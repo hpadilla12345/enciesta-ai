@@ -261,7 +261,10 @@ exports.handler = async (event) => {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const msg = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: enableWebSearch ? 1800 : 900,
+      // 900 no alcanzaba: las 5 secciones juntas (analisis ~350 tokens +
+      // benchmark ~180 + brechas ~250 + competencia ~250 + iniciativas ~200)
+      // se truncaban a media frase en la ultima. 2500 da holgura real.
+      max_tokens: enableWebSearch ? 4000 : 2500,
       system: systemPrompt + '\n\nResponde SOLO con texto plano separado por marcadores. Sin HTML. Sin markdown. No repitas el nombre de la sección al inicio del texto (no escribas "ANÁLISIS" ni "BENCHMARK" etc.), entrega directamente el contenido.',
       messages: [{
         role: 'user',
