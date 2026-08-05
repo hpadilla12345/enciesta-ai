@@ -155,6 +155,13 @@ exports.handler = async (event) => {
     if (!systemPrompt)   systemPrompt   = eventConfig.systemPrompt   || 'Eres consultor senior del CoE-IA de Grupo Scanda.';
     if (!reportTemplate) reportTemplate = eventConfig.reportTemplate || '<div style="padding:32px"><h2>{{SCORE_MADUREZ}}/5 · {{NIVEL_GARTNER}}</h2><p>{{ANALISIS_POSICION}}</p></div>';
 
+    // Si la traida fresca de GitHub fallo (ev sigue null), usar el eventConfig
+    // que mando el cliente como respaldo TAMBIEN para dimensions/scoring/
+    // routeSteps/trackLabels/pillars — antes solo se respaldaban systemPrompt/
+    // reportTemplate/questions, y estos 5 campos se iban directo a los
+    // defaults del modelo de IA sin importar el evento real
+    if (!ev) ev = eventConfig;
+
 
     // Dimensiones, niveles y ruta: del evento si definidos, si no los defaults de IA
     const DIMS    = (ev && ev.dimensions  && ev.dimensions.length)  ? ev.dimensions  : DEFAULT_DIMS;
