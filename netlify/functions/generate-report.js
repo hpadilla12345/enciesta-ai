@@ -269,9 +269,9 @@ exports.handler = async (event) => {
       messages: [{
         role: 'user',
         content: `Respondente: ${respondent.name} | ${respondent.company} | ${respondent.role} | ${respondent.industry || '—'}
-Score de Madurez: ${scoreNivelStr}/5 · ${nivelMadurez} · ${scoreGlobal}/100
+Score de Madurez: ${scoreNivelStr}/${scaleMax} · ${nivelMadurez} · ${scoreGlobal}/100
 Dimensiones: ${dimsText}
-Brechas críticas (más bajas): ${brechas3.map(d=>`${d.label} ${d.score}/5`).join(', ')}
+Brechas críticas (más bajas): ${brechas3.map(d=>`${d.label} ${d.score}/${scaleMax}`).join(', ')}
 Datos adicionales: ${answersText}
 
 Genera texto para estas 5 secciones separadas por ===:
@@ -281,7 +281,7 @@ Genera texto para estas 5 secciones separadas por ===:
 ===
 3. BRECHAS (para cada una de las 3 dimensiones más bajas: una POR LÍNEA, cada línea inicia con el nombre EXACTO de la dimensión seguido de dos puntos y 2 oraciones sobre impacto operativo y qué se hace primero)
 ===
-4. INDUSTRIA_IA (3 casos Track A reales de su industria con resultado en %, luego 2 casos Track B transformacionales)
+4. ${ev && ev.section4Spec ? ev.section4Spec : 'INDUSTRIA_IA (3 casos Track A reales de su industria con resultado en %, luego 2 casos Track B transformacionales)'}
 ===
 5. INICIATIVAS (exactamente 3, cada una en una línea nueva con el formato "1. Título" y en la línea siguiente la descripción con ROI estimado y plazo — respeta la numeración 1. 2. 3. al inicio de línea)`
       }],
