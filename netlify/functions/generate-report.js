@@ -38,6 +38,74 @@ function dimColor(val, min, range) {
   return DIM_COLORS[n] || '#94a3b8';
 }
 
+// ── Generadores server-side de visuales (deterministas, no dependen del
+// formato de texto de Claude — a diferencia de BRECHAS/INICIATIVAS, estos
+// se calculan 100% de los puntajes ya conocidos antes de llamar al modelo) ──
+
+// Ladder horizontal de N escalones, resalta acumulativamente hasta el nivel actual
+function buildLadderHtml(levelBands, nivelMadurez) {
+  if (!levelBands || !levelBands.length) return '';
+  const labels = levelBands.map(b => b.label);
+  const currentIdx = Math.max(0, labels.indexOf(nivelMadurez));
+  const stages = labels.map((label, i) => {
+    const active = i <= currentIdx;
+    const isCurrent = i === currentIdx;
+    return `<div style="flex:1;text-align:center"><div style="height:8px;border-radius:999px;background:${active ? '#0b1a30' : '#e2e8f0'}"></div><div style="font-size:10px;font-weight:${isCurrent ? 800 : 400};color:${isCurrent ? '#0b1a30' : '#94a3b8'};margin-top:6px">${i + 1} &middot; ${label}</div></div>`;
+  }).join('');
+  return `<div style="display:flex;gap:4px">${stages}</div>`;
+}
+
+// Tarjetas resumen para un pequeno numero de "lentes" que agrupan varias
+// dimensiones (ej. Oferta / Procesos / Gente). ev.pillars define los grupos.
+function buildPillarsHtml(pillars, scores, scaleMax) {
+  if (!pillars || !pillars.length) return '';
+  const cards = pillars.map(p => {
+    const vals = (p.dimIds || []).map(id => scores[id]).filter(v => v !== null && v !== undefined);
+    const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+    const pct = Math.max(0, Math.min(100, Math.round((avg / scaleMax) * 1000) / 10));
+    const ratio = scaleMax ? avg / scaleMax : 0;
+    const color = ratio >= 0.6 ? '#059669' : ratio >= 0.35 ? '#f59e0b' : '#dc2626';
+    return `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px"><div style="font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:${color};margin-bottom:6px">${p.label}</div><div style="font-size:26px;font-weight:900;color:#0b1a30">${avg.toFixed(1)}<span style="font-size:14px;color:#94a3b8;font-weight:600">/${scaleMax}</span></div><div style="background:#e2e8f0;border-radius:999px;height:5px;margin:8px 0"><div style="width:${pct}%;height:100%;border-radius:999px;background:${color}"></div></div><div style="font-size:11px;color:#6b7280;line-height:1.5">${p.note || ''}</div></div>`;
+  }).join('');
+  return `<div style="display:grid;grid-template-columns:repeat(${pillars.length},1fr);gap:14px">${cards}</div>`;
+}
+
+// Radar/spider SVG generico para N dimensiones (N>=3), calculado con
+// coordenadas exactas — no requiere librerias externas
+function buildRadarSvg(dims, scores, scaleMax) {
+  const n = dims.length;
+  if (n < 3) return '';
+  const cx = 210, cy = 210, maxR = 150;
+  const angle = i => -Math.PI / 2 + i * (2 * Math.PI / n);
+  const pt = (i, val) => {
+    const r = (Math.max(0, val) / scaleMax) * maxR;
+    return [Math.round((cx + r * Math.cos(angle(i))) * 10) / 10, Math.round((cy + r * Math.sin(angle(i))) * 10) / 10];
+  };
+  const ringPts = val => dims.map((_, i) => pt(i, val).join(',')).join(' ');
+  const dataPts = dims.map((d, i) => pt(i, scores[d.id] !== null && scores[d.id] !== undefined ? scores[d.id] : 0));
+  const dataPoly = dataPts.map(p => p.join(',')).join(' ');
+  const axisLines = dims.map((_, i) => { const [ex, ey] = pt(i, scaleMax); return `<line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" stroke="#e2e8f0" stroke-width="1"/>`; }).join('');
+  const rings = [scaleMax * 0.33, scaleMax * 0.66, scaleMax].map((v, ri) => `<polygon points="${ringPts(v)}" fill="none" stroke="${ri === 2 ? '#cbd5e1' : '#e2e8f0'}" stroke-width="${ri === 2 ? 1.5 : 1}"/>`).join('');
+  const dots = dataPts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="#0d9488"/>`).join('');
+  const labels = dims.map((d, i) => {
+    const [lx, ly] = pt(i, scaleMax * 1.19);
+    const val = scores[d.id];
+    const has = val !== null && val !== undefined;
+    const color = has ? dimColor(val, 0, scaleMax) : '#94a3b8';
+    const short = d.tag || d.label;
+    return `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-family="Inter,sans-serif" font-weight="700" fill="#0b1a30">${short}</text><text x="${lx}" y="${Number(ly) + 14}" text-anchor="middle" font-size="10" font-family="monospace" fill="${color}">${has ? val : '—'}/${scaleMax}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 420 420" width="100%" style="max-width:420px">${rings}${axisLines}<polygon points="${dataPoly}" fill="#0d9488" fill-opacity="0.22" stroke="#0d9488" stroke-width="2"/>${dots}${labels}</svg>`;
+}
+
+// Quita el nombre de seccion si Claude lo repitio al inicio del texto
+// (ej. "ANÁLISIS\n\n..." en vez de solo "..."), sin depender de que el
+// prompt lo pida perfecto cada vez
+function stripLeadingLabel(text) {
+  if (!text) return text;
+  return text.replace(/^[A-ZÁÉÍÓÚÑ_ ]{4,40}[:\-–]?\s*\n+/, '').trim();
+}
+
 function formatAnswer(ans, qType) {
   if (ans === null || ans === undefined) return 'No respondida';
   if (qType === 'scale') return `${ans}/5`;
@@ -156,6 +224,13 @@ exports.handler = async (event) => {
       return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>${d.label}</span><span style="color:${color};font-weight:700">${has ? val : '—'}/${scaleMax}</span></div><div style="background:#e2e8f0;border-radius:999px;height:7px"><div style="width:${pct}%;height:100%;border-radius:999px;background:${color}"></div></div></div>`;
     }).join('');
 
+    // Visuales adicionales calculados server-side (ver funciones arriba)
+    const ladderHtml  = LEVEL_BANDS ? buildLadderHtml(LEVEL_BANDS, nivelMadurez) : '';
+    const pillarsHtml = (ev && Array.isArray(ev.pillars) && ev.pillars.length) ? buildPillarsHtml(ev.pillars, scores, scaleMax) : '';
+    const radarSvg     = buildRadarSvg(DIMS, scores, scaleMax);
+    // Conversion a escala 1-5 estandar de industria, junto al modelo propio
+    const score5 = (((avg - scaleMin) / scaleRange) * 4 + 1).toFixed(1);
+
     // Sorted by score for brechas (lowest 3)
     const sortedDims = DIMS.map(d => ({ ...d, score: scores[d.id] !== null ? scores[d.id] : 0 })).sort((a,b) => a.score - b.score);
     const brechas3 = sortedDims.slice(0, 3);
@@ -172,11 +247,15 @@ exports.handler = async (event) => {
     const ctaText = eventConfig.ctaText || 'AGENDA TU AI DISCOVERY →';
 
     // ── CLAUDE: only text analysis (~500 tokens output) ──────────────────────
+    // Un evento puede habilitar busqueda web (ej. para investigar competencia
+    // digital real a partir del sitio/posicionamiento del respondente). Esto
+    // consume mas tokens y tiempo, por eso es opt-in por evento, no global.
+    const enableWebSearch = !!(ev && ev.enableWebSearch);
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const msg = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 900,
-      system: systemPrompt + '\n\nResponde SOLO con texto plano separado por marcadores. Sin HTML. Sin markdown.',
+      max_tokens: enableWebSearch ? 1800 : 900,
+      system: systemPrompt + '\n\nResponde SOLO con texto plano separado por marcadores. Sin HTML. Sin markdown. No repitas el nombre de la sección al inicio del texto (no escribas "ANÁLISIS" ni "BENCHMARK" etc.), entrega directamente el contenido.',
       messages: [{
         role: 'user',
         content: `Respondente: ${respondent.name} | ${respondent.company} | ${respondent.role} | ${respondent.industry || '—'}
@@ -190,33 +269,56 @@ Genera texto para estas 5 secciones separadas por ===:
 ===
 2. BENCHMARK (2 oraciones: comparación vs ${respondent.industry || 'su industria'} en LATAM con cifras reales)
 ===
-3. BRECHAS (para cada una de las 3 dimensiones más bajas: nombre + 2 oraciones sobre impacto operativo y componente CoE que la resuelve)
+3. BRECHAS (para cada una de las 3 dimensiones más bajas: una POR LÍNEA, cada línea inicia con el nombre EXACTO de la dimensión seguido de dos puntos y 2 oraciones sobre impacto operativo y qué se hace primero)
 ===
 4. INDUSTRIA_IA (3 casos Track A reales de su industria con resultado en %, luego 2 casos Track B transformacionales)
 ===
-5. INICIATIVAS (3 iniciativas concretas: nombre + descripción 2 líneas + ROI estimado + plazo + patrón CoE)`
+5. INICIATIVAS (exactamente 3, cada una en una línea nueva con el formato "1. Título" y en la línea siguiente la descripción con ROI estimado y plazo — respeta la numeración 1. 2. 3. al inicio de línea)`
       }],
+      ...(enableWebSearch ? { tools: [{ type: 'web_search_20250305', name: 'web_search' }] } : {}),
     });
 
+    // Junta TODOS los bloques de texto de la respuesta, no solo el primero:
+    // con web_search activo, Claude intercala bloques de busqueda antes del
+    // texto final, y content[0] puede no ser texto en absoluto
+    const rawTextJoined = msg.content
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n');
+
     // Strip markdown from Claude output
-    const rawText = msg.content[0].text
+    const rawText = rawTextJoined
       .replace(/\*\*([^*]+)\*\*/g, '$1')  // **bold** → text
       .replace(/\*([^*]+)\*/g, '$1')         // *italic* → text
       .replace(/^[-*] /gm, '• ')              // bullet markers
       .replace(/^#{1,3} /gm, '');              // headings
     const parts = rawText.split('===').map(s => s.trim());
-    const analisis    = parts[0] || '';
-    const benchmark   = parts[1] || '';
+    const analisis    = stripLeadingLabel(parts[0] || '');
+    const benchmark   = stripLeadingLabel(parts[1] || '');
     const brechasText = parts[2] || '';
-    const industriaText = parts[3] || '';
+    const industriaText = stripLeadingLabel(parts[3] || '');
     const iniciativasText = parts[4] || '';
 
     // ── Build HTML sections server-side ──────────────────────────────────────
     // Brechas
+    // Antes se tomaban 3 líneas fijas desde donde aparecía la etiqueta, lo que
+    // arrastraba texto de la SIGUIENTE brecha cuando Claude escribía cada una
+    // en una sola línea. Ahora se corta justo antes de que aparezca la
+    // etiqueta de OTRA dimensión conocida (o al final del texto).
+    const brechaLabels = brechas3.map(d => d.label);
     const brechasHtml = brechas3.map((d, i) => {
       const lines = brechasText.split('\n').filter(Boolean);
       const start = lines.findIndex(l => l.includes(d.label));
-      const text = start >= 0 ? lines.slice(start, start+3).join(' ') : `${d.label} (${d.score}/${scaleMax}): brecha identificada.`;
+      let text;
+      if (start >= 0) {
+        let end = lines.length;
+        for (let j = start + 1; j < lines.length; j++) {
+          if (brechaLabels.some(lbl => lbl !== d.label && lines[j].includes(lbl))) { end = j; break; }
+        }
+        text = lines.slice(start, end).join(' ');
+      } else {
+        text = `${d.label} (${d.score}/${scaleMax}): brecha identificada.`;
+      }
       const icons = ['🏛️','🗄️','🏢','👥','⚙️','📊','🔒'];
       const coeMap = { 'qB5':'CoE Componente 06 (Gobernanza)', 'qB7':'CoE Componente 05 (AI Data)', 'qB3':'CoE Fase 01 Champions', 'qB4':'CoE Programa Champions', 'qB1':'CoE Discovery', 'qB2':'CoE Discovery (PoV)', 'qB6':'CoE Fase 03 Construcción' };
       const tag = d.tag || coeMap[d.id] || '';
@@ -238,10 +340,18 @@ Genera texto para estas 5 secciones separadas por ===:
     }
 
     // Iniciativas
-    const iniLines = iniciativasText.split(/\n(?=\d\.|\d\))/);
+    // El split anterior exigia un salto de linea justo antes de "1." — si
+    // Claude no dejaba ese salto exacto, todo el texto caia en un solo bloque
+    // y las tarjetas quedaban vacias. Ahora acepta "1.", "1)" o "1-", con o
+    // sin salto de linea previo, y tolera espacios entre el numero y el punto.
+    let iniLines = iniciativasText.split(/\n*(?=\d\s*[\.\)\-]\s)/).map(s => s.trim()).filter(Boolean);
+    if (iniLines.length < 2) {
+      // Fallback: separar por parrafo si el numerado no se detecto en absoluto
+      iniLines = iniciativasText.split(/\n{2,}/).map(s => s.trim()).filter(Boolean);
+    }
     const iniciativasHtml = iniLines.slice(0,3).map((item, i) => {
       const lines2 = item.trim().split('\n');
-      const title = lines2[0].replace(/^\d[\.\)]\s*/,'').trim();
+      const title = (lines2[0] || '').replace(/^\d\s*[\.\)\-]\s*/,'').trim() || `Iniciativa ${i+1}`;
       const desc = lines2.slice(1).join(' ').trim();
       return `<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #f1f5f9"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0597ff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">${i+1}</div><div><div style="font-size:14px;font-weight:700;color:#0b1a30;margin-bottom:4px">${title}</div><div style="font-size:13px;color:#6b7280;line-height:1.6">${desc}</div></div></div>`;
     }).join('');
@@ -259,13 +369,19 @@ Genera texto para estas 5 secciones separadas por ===:
     const vars = {
       NOMBRE: respondent.name, EMPRESA: respondent.company, CARGO: respondent.role,
       SCORE: String(scoreGlobal), SCORE_MADUREZ: scoreNivelStr, NIVEL_GARTNER: nivelMadurez,
+      SCORE_5: score5,
       DIMENSIONES_BARRAS: dimensionBars,
+      LADDER_HTML: ladderHtml,
+      PILLARS_HTML: pillarsHtml,
+      RADAR_SVG: radarSvg,
       ANALISIS_POSICION: analisis,
       BENCHMARK: benchmark,
       BRECHAS: brechasHtml,
       INDUSTRIA_IA: industria,
       INICIATIVAS: iniciativasHtml,
       RUTA_COE: rutaHtml,
+      SITIO_WEB: answers.mW1 || '',
+      COMPETIDORES_DECLARADOS: answers.mW2 || '',
       CTA_URL: ctaUrl, CTA_TEXT: ctaText,
     };
 
@@ -308,7 +424,8 @@ Genera texto para estas 5 secciones separadas por ===:
     <a href="${reportUrl}" style="display:inline-block;background:linear-gradient(135deg,#0d9488,#0597ff);color:#fff;font-weight:700;font-size:15px;padding:14px 36px;border-radius:8px;text-decoration:none;letter-spacing:.02em">
       Ver mi reporte completo →
     </a>
-    <p style="color:#94a3b8;font-size:11px;margin:20px 0 0">El enlace es personal y estará disponible por 30 días.</p>
+    <p style="color:#94a3b8;font-size:11px;margin:16px 0 0;word-break:break-all">O copia este enlace: <a href="${reportUrl}" style="color:#0d9488">${reportUrl}</a></p>
+    <p style="color:#94a3b8;font-size:11px;margin:8px 0 0">El enlace es personal y estará disponible por 30 días.</p>
   </td></tr>
   <tr><td style="background:#f8fafc;padding:16px 40px;text-align:center;border-top:1px solid #e2e8f0">
     <p style="color:#94a3b8;font-size:11px;margin:0">© Grupo Scanda · Centro de Excelencia de IA</p>
