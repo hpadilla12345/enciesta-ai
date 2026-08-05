@@ -3,7 +3,7 @@
 // Archivos: data/events.json  y  data/responses/{eventId}.json
 
 const OWNER = process.env.GITHUB_REPO_OWNER || 'hpadilla12345';
-const REPO  = process.env.GITHUB_REPO_NAME  || 'enciesta-ai';
+const REPO  = process.env.GITHUB_REPO_NAME  || 'encuesta-ai';
 const TOKEN = process.env.GITHUB_TOKEN;
 const BRANCH = 'main';
 
@@ -56,7 +56,10 @@ async function saveEvent(eventData) {
   const { data: events, sha } = await ghGet('data/events.json');
   const list = events || [];
   const idx = list.findIndex(e => e.eventId === eventData.eventId);
-  if (idx >= 0) list[idx] = eventData; else list.push(eventData);
+  // Fusiona en vez de reemplazar: si el formulario que llama no conoce un
+  // campo (ej. dimensions, scoring, pillars — agregados para eventos
+  // personalizados), ese campo se conserva en vez de borrarse.
+  if (idx >= 0) list[idx] = { ...list[idx], ...eventData }; else list.push(eventData);
   await ghPut('data/events.json', list, sha, `event: ${eventData.eventName}`);
   return eventData;
 }
