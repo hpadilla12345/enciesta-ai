@@ -269,7 +269,9 @@ exports.handler = async (event) => {
       messages: [{
         role: 'user',
         content: `Respondente: ${respondent.name} | ${respondent.company} | ${respondent.role} | ${respondent.industry || '—'}
-Score de Madurez: ${scoreNivelStr}/${scaleMax} · ${nivelMadurez} · ${scoreGlobal}/100
+Score de Madurez: ${scoreNivelStr}/${scaleMax} · ${scoreGlobal}/100
+NIVEL YA CALCULADO POR EL SISTEMA: ${nivelMadurez}${vetoed ? ' (forzado a este nivel por regla de veto: una dimensión crítica está en el mínimo, sin importar el promedio)' : ''}
+IMPORTANTE: usa EXACTAMENTE ese nivel en tu texto. NO lo recalcules a partir del promedio ni de las bandas: el sistema ya aplicó reglas que tú no ves.
 Dimensiones: ${dimsText}
 Brechas críticas (más bajas): ${brechas3.map(d=>`${d.label} ${d.score}/${scaleMax}`).join(', ')}
 Datos adicionales: ${answersText}
@@ -453,7 +455,7 @@ Genera texto para estas 5 secciones separadas por ===:
           from: process.env.RESEND_FROM_EMAIL || 'ai@encuestas.hpm.one',
           reply_to: 'hola@gruposcanda.com',
           to: [respondent.email],
-          subject: `Tu Diagnóstico de Madurez en IA está listo · Score ${scoreVal}/100`,
+          subject: `${eventName || 'Tu diagnóstico'} · tu reporte está listo (Score ${scoreVal}/100)`,
           html: shortEmail,
           headers: { 'List-Unsubscribe': '<mailto:hola@gruposcanda.com?subject=unsubscribe>' },
         }),
