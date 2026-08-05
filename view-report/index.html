@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tu Reporte de Madurez en IA</title>
+<title>Tu Reporte de Diagnóstico</title>
 <style>
 body{margin:0;font-family:Inter,sans-serif;background:#f8fafc;display:flex;align-items:center;justify-content:center;min-height:100vh}
 .loading{text-align:center;color:#64748b;font-size:14px}
@@ -27,7 +27,35 @@ body{margin:0;font-family:Inter,sans-serif;background:#f8fafc;display:flex;align
     const data = await res.json();
     const report = (data.responses || []).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
     if (report && report.reportHtml) {
-      document.open(); document.write(report.reportHtml); document.close();
+      // Nombre de archivo a partir de la empresa del respondente
+      var empresa = (report.respondent && report.respondent.company) ? report.respondent.company : 'reporte';
+      var slugEmpresa = empresa.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+      var fecha = new Date().toISOString().slice(0,10);
+      var nombreArchivo = 'Diagnostico-' + slugEmpresa + '-' + fecha;
+
+      // Barra flotante de acciones (no se imprime ni se incluye al descargar)
+      var barra = '<div id="dl-bar" style="position:fixed;top:16px;right:16px;z-index:99999;display:flex;gap:8px;font-family:Inter,sans-serif">' +
+        '<button onclick="window.print()" style="cursor:pointer;background:#0b1a30;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15)">Descargar PDF</button>' +
+        '<button onclick="descargarHTML()" style="cursor:pointer;background:#fff;color:#0b1a30;border:1px solid #cbd5e1;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.10)">Descargar HTML</button>' +
+        '</div>' +
+        '<style>@media print{#dl-bar{display:none !important}}</style>';
+
+      var script = '<script>' +
+        'function descargarHTML(){' +
+        '  var bar=document.getElementById("dl-bar"); if(bar) bar.style.display="none";' +
+        '  var html="<!DOCTYPE html><html lang=\\"es\\"><head><meta charset=\\"UTF-8\\"><title>' + nombreArchivo + '</title></head><body style=\\"margin:0;background:#f8fafc\\">"+document.body.innerHTML+"</body></html>";' +
+        '  if(bar) bar.style.display="flex";' +
+        '  var blob=new Blob([html],{type:"text/html;charset=utf-8"});' +
+        '  var a=document.createElement("a");' +
+        '  a.href=URL.createObjectURL(blob); a.download="' + nombreArchivo + '.html";' +
+        '  document.body.appendChild(a); a.click(); document.body.removeChild(a);' +
+        '}' +
+        '<\/script>';
+
+      document.open();
+      document.write(report.reportHtml + barra + script);
+      document.close();
+      document.title = nombreArchivo;
     } else {
       document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#64748b"><h2>Reporte no disponible</h2><p style="margin-top:8px">Si acabas de completar la encuesta, espera unos minutos e intenta de nuevo.</p></div>';
     }
