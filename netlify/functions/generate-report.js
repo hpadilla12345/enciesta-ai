@@ -106,6 +106,111 @@ function stripLeadingLabel(text) {
   return text.replace(/^[A-ZÁÉÍÓÚÑ_ ]{4,40}[:\-–]?\s*\n+/, '').trim();
 }
 
+// ── DataForSEO: datos reales de visibilidad organica ────────────────────────
+// Credenciales via variables de entorno en Netlify (DATAFORSEO_LOGIN /
+// DATAFORSEO_PASSWORD). Si no estan configuradas, esto se salta sin romper
+// nada y el reporte se genera igual, solo sin la seccion de datos duros.
+
+// Limpia lo que escribio el usuario ("https://www.tadah.com.mx/contacto" -> "tadah.com.mx")
+function normalizeDomain(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  let d = raw.trim().toLowerCase();
+  d = d.replace(/^https?:\/\//, '').replace(/^www\./, '');
+  d = d.split('/')[0].split('?')[0].split('#')[0].trim();
+  // Debe parecer dominio: al menos un punto y solo caracteres validos
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(d)) return null;
+  return d;
+}
+
+async function dfsPost(path, payload, authHeader, timeoutMs) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs || 8000);
+  try {
+    const res = await fetch('https://api.dataforseo.com/v3' + path, {
+      method: 'POST',
+      headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const task = json && json.tasks && json.tasks[0];
+    if (!task || task.status_code !== 20000) throw new Error('task status ' + (task && task.status_code));
+    return (task.result && task.result[0]) || null;
+  } finally { clearTimeout(timer); }
+}
+
+function orgSummary(m) {
+  const o = (m && m.organic) || {};
+  const top10 = (o.pos_1 || 0) + (o.pos_2_3 || 0) + (o.pos_4_10 || 0);
+  return { keywords: o.count || 0, top10, etv: Math.round(o.etv || 0) };
+}
+
+// Devuelve { propio, competidores[] } o null si no hay credenciales / falla
+async function fetchSeoData(domain, locationName, languageCode) {
+  const login = process.env.DATAFORSEO_LOGIN;
+  const password = process.env.DATAFORSEO_PASSWORD;
+  if (!login || !password || !domain) return null;
+  const auth = 'Basic ' + Buffer.from(login + ':' + password).toString('base64');
+  const loc = locationName || 'Mexico';
+  const lang = languageCode || 'es';
+  try {
+    const base = { target: domain, location_name: loc, language_code: lang };
+    const [rank, comp] = await Promise.all([
+      dfsPost('/dataforseo_labs/google/domain_rank_overview/live', [base], auth).catch(() => null),
+      dfsPost('/dataforseo_labs/google/competitors_domain/live',
+              [Object.assign({}, base, { limit: 8, exclude_top_domains: true })], auth).catch(() => null),
+    ]);
+
+    const propioItem = rank && rank.items && rank.items[0];
+    const propio = Object.assign({ domain }, orgSummary(propioItem && propioItem.metrics));
+
+    let competidores = [];
+    if (comp && Array.isArray(comp.items)) {
+      competidores = comp.items
+        .filter(it => it.domain && it.domain !== domain)
+        .map(it => Object.assign({ domain: it.domain }, orgSummary(it.full_domain_metrics)))
+        .filter(c => c.keywords > 0)
+        .sort((a, b) => b.etv - a.etv)
+        .slice(0, 5);
+    }
+    return { propio, competidores };
+  } catch (e) {
+    console.log('DataForSEO fallback:', e.message);
+    return null;
+  }
+}
+
+// Tabla HTML comparativa, ordenada de mayor a menor visibilidad
+function buildSeoTableHtml(seo) {
+  if (!seo) return '';
+  const filas = [Object.assign({}, seo.propio, { esPropio: true })]
+    .concat(seo.competidores.map(c => Object.assign({}, c, { esPropio: false })))
+    .sort((a, b) => b.etv - a.etv);
+  const nf = n => (n || 0).toLocaleString('es-MX');
+  const tr = filas.map(f => {
+    const bg = f.esPropio ? 'background:#f0fdf9;' : '';
+    const fw = f.esPropio ? '800' : '500';
+    const alerta = f.esPropio && f.top10 === 0
+      ? ' <span style="font-family:monospace;font-size:9px;color:#dc2626">sin top 10</span>' : '';
+    return '<tr style="' + bg + 'border-bottom:1px solid #f1f5f9">' +
+      '<td style="padding:9px 6px;font-weight:' + fw + ';color:#0b1a30">' + f.domain + alerta + '</td>' +
+      '<td style="padding:9px 6px;text-align:right;color:#374151">' + nf(f.keywords) + '</td>' +
+      '<td style="padding:9px 6px;text-align:right;color:#374151">' + nf(f.top10) + '</td>' +
+      '<td style="padding:9px 6px;text-align:right;color:#374151">' + nf(f.etv) + '</td>' +
+    '</tr>';
+  }).join('');
+  return '<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0">' +
+    '<thead><tr style="border-bottom:2px solid #e2e8f0">' +
+      '<th style="text-align:left;padding:8px 6px;color:#64748b;font-weight:700">Dominio</th>' +
+      '<th style="text-align:right;padding:8px 6px;color:#64748b;font-weight:700">Keywords</th>' +
+      '<th style="text-align:right;padding:8px 6px;color:#64748b;font-weight:700">En top 10</th>' +
+      '<th style="text-align:right;padding:8px 6px;color:#64748b;font-weight:700">Tráfico est./mes</th>' +
+    '</tr></thead><tbody>' + tr + '</tbody></table>' +
+    '<p style="font-size:10px;color:#94a3b8;margin:0">Fuente: DataForSEO · búsqueda orgánica en Google. ' +
+    'El tráfico estimado es una proyección del buscador, no analítica del sitio.</p>';
+}
+
 function formatAnswer(ans, qType) {
   if (ans === null || ans === undefined) return 'No respondida';
   if (qType === 'scale') return `${ans}/5`;
@@ -257,6 +362,26 @@ exports.handler = async (event) => {
     // Un evento puede habilitar busqueda web (ej. para investigar competencia
     // digital real a partir del sitio/posicionamiento del respondente). Esto
     // consume mas tokens y tiempo, por eso es opt-in por evento, no global.
+    // Datos reales de visibilidad organica (opt-in por evento via enableSeoData).
+    // El dominio sale de la pregunta configurada en ev.seoDomainQuestionId.
+    let seoData = null, seoText = '';
+    if (ev && ev.enableSeoData) {
+      const rawDom = answers[ev.seoDomainQuestionId || 'mW1'];
+      const dom = normalizeDomain(typeof rawDom === 'string' ? rawDom : '');
+      if (dom) {
+        seoData = await fetchSeoData(dom, ev.seoLocation, ev.seoLanguage);
+        if (seoData) {
+          const p2 = seoData.propio;
+          seoText = `\nDATOS REALES DE VISIBILIDAD ORGANICA (DataForSEO, no inventar ni contradecir):\n` +
+            `Sitio del respondente ${p2.domain}: ${p2.keywords} keywords, ${p2.top10} en top 10, ${p2.etv} visitas/mes estimadas.\n` +
+            (seoData.competidores.length
+              ? `Competidores organicos reales: ` + seoData.competidores.map(c =>
+                  `${c.domain} (${c.keywords} kw, ${c.top10} en top 10, ${c.etv} visitas/mes)`).join(' · ')
+              : `No se encontraron competidores organicos comparables.`);
+        }
+      }
+    }
+
     const enableWebSearch = !!(ev && ev.enableWebSearch);
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const msg = await client.messages.create({
@@ -274,7 +399,7 @@ NIVEL YA CALCULADO POR EL SISTEMA: ${nivelMadurez}${vetoed ? ' (forzado a este n
 IMPORTANTE: usa EXACTAMENTE ese nivel en tu texto. NO lo recalcules a partir del promedio ni de las bandas: el sistema ya aplicó reglas que tú no ves.
 Dimensiones: ${dimsText}
 Brechas críticas (más bajas): ${brechas3.map(d=>`${d.label} ${d.score}/${scaleMax}`).join(', ')}
-Datos adicionales: ${answersText}
+Datos adicionales: ${answersText}${seoText}
 
 Genera texto para estas 5 secciones separadas por ===:
 1. ANÁLISIS (4 oraciones: posición actual, fortalezas, brechas, oportunidad)
@@ -392,6 +517,7 @@ Genera texto para estas 5 secciones separadas por ===:
       INDUSTRIA_IA: industria,
       INICIATIVAS: iniciativasHtml,
       RUTA_COE: rutaHtml,
+      SEO_TABLA: buildSeoTableHtml(seoData),
       SITIO_WEB: answers.mW1 || '',
       COMPETIDORES_DECLARADOS: answers.mW2 || '',
       CTA_URL: ctaUrl, CTA_TEXT: ctaText,
