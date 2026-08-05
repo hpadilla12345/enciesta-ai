@@ -746,7 +746,18 @@ function autoFillTestData() {
         });
       }
     } else if (q.type === 'open' || q.type === 'text') {
-      answers[q.id] = 'Mejorar la toma de decisiones operativas con datos en tiempo real';
+      // Respuestas de prueba especificas por pregunta: antes todas las abiertas
+      // recibian el mismo texto, lo que llenaba "sitio web" y "competidores"
+      // con una frase sin sentido y ensuciaba el reporte
+      const TEST_OPEN = {
+        mW1: 'tadah.com.mx',
+        mW2: 'Otras agencias boutique de marketing digital B2B en Mexico',
+        mP1: 'Consultoria, Soporte gestionado, Licenciamiento',
+        mP2: 'Consultoria, porque tiene mejor margen y ciclo mas corto',
+        mP3: 'Soporte genera mas hoy; consultoria deberia generar mas',
+        mZ1: 'Cambio de direccion comercial este ano',
+      };
+      answers[q.id] = TEST_OPEN[q.id] || 'Mejorar la toma de decisiones operativas con datos en tiempo real';
     }
   });
 
