@@ -1079,6 +1079,15 @@ async function submitSurvey() {
       reportTemplate: eventConfig.reportTemplate || '',
       ctaUrl:         eventConfig.ctaUrl,
       ctaText:        eventConfig.ctaText,
+      // Estos 5 campos faltaban por completo: sin ellos, si la traida fresca
+      // de events.json falla dentro de generate-report.js, el respaldo cae
+      // directo al modelo de madurez en IA (default), sin importar el evento
+      dimensions:     eventConfig.dimensions     || [],
+      scoring:        eventConfig.scoring        || null,
+      levels:         eventConfig.levels         || [],
+      routeSteps:     eventConfig.routeSteps     || [],
+      trackLabels:    eventConfig.trackLabels,
+      pillars:        eventConfig.pillars        || [],
     };
 
     fetch(`${BASE_URL}/.netlify/functions/generate-report`, {
