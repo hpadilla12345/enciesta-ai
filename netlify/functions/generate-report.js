@@ -146,8 +146,43 @@ function orgSummary(m) {
   return { keywords: o.count || 0, top10, etv: Math.round(o.etv || 0) };
 }
 
+// Plataformas globales y herramientas SaaS que comparten keywords por
+// casualidad pero no son competencia comercial real de una PyME o agencia.
+// Se compara contra la raiz del dominio, asi que cubre .com, .es, .mx, etc.
+const SEO_PLATAFORMAS_GLOBALES = [
+  'google','youtube','facebook','meta','instagram','linkedin','twitter','tiktok',
+  'amazon','microsoft','apple','adobe','salesforce','oracle','sap','ibm',
+  'hubspot','mailchimp','shopify','wix','squarespace','wordpress','godaddy',
+  'hostinger','bluehost','namecheap','cloudflare','canva','notion','slack',
+  'semrush','ahrefs','moz','similarweb','metricool','hootsuite','buffer',
+  'hotmart','udemy','coursera','domestika','crehana','platzi','unir','iebschool',
+  'wikipedia','medium','reddit','quora','forbes','entrepreneur','shopify',
+];
+
+// Raiz del dominio sin TLD ni subdominios: "blog.hubspot.es" -> "hubspot"
+function raizDominio(d) {
+  if (!d) return '';
+  const partes = String(d).toLowerCase().split('.');
+  // quita TLD compuestos tipo .com.mx / .co.uk
+  let corte = partes.length - 1;
+  if (partes.length >= 3 && ['com','co','net','org','gob','edu'].includes(partes[partes.length - 2])) {
+    corte = partes.length - 2;
+  }
+  return partes[corte - 1] || partes[0] || '';
+}
+
+function esCompetidorComparable(c, maxEtv, extraExcluidos) {
+  const raiz = raizDominio(c.domain);
+  if (SEO_PLATAFORMAS_GLOBALES.includes(raiz)) return false;
+  if (Array.isArray(extraExcluidos) && extraExcluidos.some(x => raizDominio(x) === raiz)) return false;
+  // Un dominio con trafico muy por encima del techo configurado no es
+  // comparable: comparte keywords por volumen, no por competir por el cliente
+  if (maxEtv && c.etv > maxEtv) return false;
+  return c.keywords > 0;
+}
+
 // Devuelve { propio, competidores[] } o null si no hay credenciales / falla
-async function fetchSeoData(domain, locationName, languageCode) {
+async function fetchSeoData(domain, locationName, languageCode, maxEtv, excluidos) {
   const login = process.env.DATAFORSEO_LOGIN;
   const password = process.env.DATAFORSEO_PASSWORD;
   if (!login || !password || !domain) return null;
@@ -167,11 +202,13 @@ async function fetchSeoData(domain, locationName, languageCode) {
 
     let competidores = [];
     if (comp && Array.isArray(comp.items)) {
+      // La API ya devuelve por relevancia; NO reordenar por trafico aqui,
+      // porque eso empuja a los dominios gigantes al frente y desplaza a los
+      // competidores realmente comparables.
       competidores = comp.items
         .filter(it => it.domain && it.domain !== domain)
         .map(it => Object.assign({ domain: it.domain }, orgSummary(it.full_domain_metrics)))
-        .filter(c => c.keywords > 0)
-        .sort((a, b) => b.etv - a.etv)
+        .filter(c => esCompetidorComparable(c, maxEtv, excluidos))
         .slice(0, 5);
     }
     return { propio, competidores };
@@ -369,7 +406,8 @@ exports.handler = async (event) => {
       const rawDom = answers[ev.seoDomainQuestionId || 'mW1'];
       const dom = normalizeDomain(typeof rawDom === 'string' ? rawDom : '');
       if (dom) {
-        seoData = await fetchSeoData(dom, ev.seoLocation, ev.seoLanguage);
+        seoData = await fetchSeoData(dom, ev.seoLocation, ev.seoLanguage,
+                                     ev.seoMaxEtv || 500000, ev.seoExcludeDomains);
         if (seoData) {
           const p2 = seoData.propio;
           seoText = `\nDATOS REALES DE VISIBILIDAD ORGANICA (DataForSEO, no inventar ni contradecir):\n` +
